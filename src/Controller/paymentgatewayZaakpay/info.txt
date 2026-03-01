@@ -1,0 +1,18 @@
+* Some Settings in .env file
+ZAAKPAY_SECRETKEY='0678056d96914a8583fb518caf42828a'
+ZAAKPAY_TRANSACTAPI='https://zaakstaging.zaakpay.com/api/paymentTransact/V8'
+ZAAKPAY_UPDATEAPI='https://zaakstaging.zaakpay.com/updateTxn'
+ZAAKPAY_CHECKSTATUSAPI='https://zaakstaging.zaakpay.com/checkTxn?v=5'
+ZAAKPAY_MERCHANTKEY='fb2016ffd3a64b2994a6289dc2b671a4'
+ZAAKPAY_TRANSACTIONPAGE='begintransaction'
+ZAAKPAY_CHECKTRANSACTIONSTATUSPAGE='checktransactionstatus'
+ZAAKPAY_REFUNDTRANSACTIONPAGE='refundtransaction'
+ZAAKPAY_RESPONSEPAGE='response' 
+ZAAKPAY_API_PREFIX='/payment'
+
+
+* get env setting in config file - src\config\config.ts
+
+* some changes in server.ts file
+
+* rest of code in this folder

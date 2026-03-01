@@ -1,0 +1,68 @@
+image: node:16.20
+# ensure that PRIVATE_KEY is correctly set in CI-CD variables in gitlab
+variables:
+    DEPLOY_SERVER_IP: 35.175.101.179
+    DEPLOYMENT_DIR: /home/ubuntu/evegah-node-prod-https
+    FRONTEND_DIR: /var/www/evegah-admin-prod
+    COMMIT_FILE: .lastcommit-be.txt
+    API_NAME: evegah-prod-https-api
+
+    DEV_DEPLOY_SERVER_IP: 35.175.101.179
+    DEV_DEPLOYMENT_DIR: /home/ubuntu/evegah-https-node/
+    DEV_FRONTEND_DIR: /var/www/evegah-admin
+    DEV_API_NAME: evegah-dev-api
+
+
+release_deployment:
+  stage: deploy
+  only:
+    - release-prod
+  cache:
+    paths:
+      - node_modules
+  before_script:
+    # Generates to connect to the AWS unit the SSH key.
+    - mkdir -p ~/.ssh
+    - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    # Sets the permission to 600 to prevent a problem with AWS
+    # that it’s too unprotected.
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - npm install
+    - cp .env.prod .env 
+    - node swagger.ts
+    - ./node_modules/typescript/bin/tsc --p tsconfig.json
+    - TZ=Asia/Kolkata date > $COMMIT_FILE && git log -n 1 >> $COMMIT_FILE
+    - which rsync || ( apt-get update -y && apt-get install rsync -y )
+    - rsync -av $COMMIT_FILE ubuntu@$DEPLOY_SERVER_IP:$FRONTEND_DIR
+    - rsync -av . ubuntu@$DEPLOY_SERVER_IP:$DEPLOYMENT_DIR
+    - ssh ubuntu@$DEPLOY_SERVER_IP "pm2 stop $API_NAME && pm2 start $DEPLOYMENT_DIR/build/server.js -n $API_NAME"
+    - echo "Prod Deployment is complete"
+
+dev_deployment:
+  stage: deploy
+  only:
+    - release-dev
+  cache:
+    paths:
+      - node_modules
+  before_script:
+    # Generates to connect to the AWS unit the SSH key.
+    - mkdir -p ~/.ssh
+    - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    # Sets the permission to 600 to prevent a problem with AWS
+    # that it’s too unprotected.
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - npm install
+    - cp .env.dev .env 
+    - node swagger.ts
+    - ./node_modules/typescript/bin/tsc --p tsconfig.json
+    - TZ=Asia/Kolkata date > $COMMIT_FILE && git log -n 1 >> $COMMIT_FILE
+    - which rsync || ( apt-get update -y && apt-get install rsync -y )
+    - rsync -av $COMMIT_FILE ubuntu@$DEV_DEPLOY_SERVER_IP:$DEV_FRONTEND_DIR
+    - rsync -av . ubuntu@$DEV_DEPLOY_SERVER_IP:$DEV_DEPLOYMENT_DIR
+    - ssh ubuntu@$DEV_DEPLOY_SERVER_IP "pm2 stop $DEV_API_NAME && pm2 start $DEV_DEPLOYMENT_DIR/build/server.js -n $DEV_API_NAME"
+    - echo "Dev Deployment is complete"

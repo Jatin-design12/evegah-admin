@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv = "refresh" content = "5; url = https://metroemobility.kritin.in/home/Wallet" />
+<title>Zaakpay Payment Gateway Response</title>
+</head>
+<body>
+  <h2>Response from ZaakPay Payment Gateway</h2>
+
+  <center>
+    <table>
+      <tr>
+        <td>Order Id</td>
+        <td><%=data.orderId %> </td>
+      </tr>
+
+      <tr>
+        <td>Response Code</td>
+        <% if(isChecksumValid){ %>
+          <td><%=data.responseCode%></td>
+        <% } else{ %>
+          <td><font color=Red>***</font></td>
+        <% } %>
+      </tr>
+      <tr>
+        <td>Response Description</td>
+        <% if(isChecksumValid){ %>
+          <td><%=data.responseDescription%></td>
+        <% } else{ %>
+          <td><font color=Red>This response is compromised.</font></td>
+        <% } %>
+      </tr>
+
+      <tr>
+        <td>paymentMode Description</td>
+        <% if(isChecksumValid){ %>
+          <td><%=data.paymentMode%></td>
+        <% } else{ %>
+          <td><font color=Red>This response is compromised.</font></td>
+        <% } %>
+      </tr>
+
+      <tr>
+      <td>amount</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.amount%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+
+      <tr>
+      <td>bank</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.bank%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>bankid</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.bankid%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>cardId</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.cardId%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>cardScheme</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.cardScheme%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>cardToken</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.cardToken%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>cardhashid</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.cardhashid%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>doRedirect</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.doRedirect%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>paymentMethod</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.paymentMethod%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>productDescription</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.productDescription%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>pgTransId</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.pgTransId%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+      <td>pgTransTime</td>
+      <% if(isChecksumValid){ %>
+        <td><%=data.pgTransTime%></td>
+      <% } else{ %>
+        <td><font color=Red>This response is compromised.</font></td>
+      <% } %>
+    </tr>
+
+      <tr>
+        <td width="100%"  >Checksum verified?</td>
+        <% if(isChecksumValid){ %>
+          <td width="100%"  >Yes</td>
+        <% } else{ %>
+          <td width="100%"  ><font color=Red>No</font></td>
+        <% } %>
+      </tr>
+    </table>
+
+
+  </center>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Zaakpay Payment Gateway Index</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <div style="width:1200px; margin:30px auto;">
+        <div style=" font:normal 14px/22px Arial, Helvetica, sans-serif; color:#32454A; text-align:left;">
+            <strong style="font:bold 16px/22px Arial, Helvetica, sans-serif;">Hey! Welcome to Zaakpay NodeJS kit.</strong><br/>
+            Zaakpay PG is made up of 3 different APIs. Inside the kit, We have config file where you can define ENV and merchant credentials accordingly.
+            <br /><br />
+
+            <ul>
+                <li><strong>Staging Server</strong>: https://zaakstaging.zaakpay.com <br/></li>
+                <li><strong>Live Server</strong>: https://api.zaakpay.com/</li>
+                <li><strong>config.js Path</strong>: /NodeJS-PG-KIT/NodeJs_KIT/lib/config.js</li>
+            </ul>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">Purpose: This API can be used to initiate a transaction and redirect user to Zaakpay Express Checkout Page.<br /></p>
+                        <a href="/transact" class="col text-center btn btn-primary">Transact API</a>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">Purpose: This API can be used to check the latest status of the transaction.</p>
+                        <a href="/checktxn" class="col text-center btn btn-primary">Check Status API</a>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">Purpose: This API can be used to refund/Update the status of the transaction.</p>
+                        <a href="/refundtxn" class="col text-center btn btn-primary">Update/Refund API</a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
