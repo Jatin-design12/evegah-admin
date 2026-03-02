@@ -18,6 +18,38 @@ import { AddExceptionIntoDB } from '../../helper/responseHandler';
 
 const crypto = require('crypto');
 
+const ONLINE_DEVICE_STATE_ENUM_ID = 23;
+const OFFLINE_DEVICE_STATE_ENUM_ID = 24;
+const DEVICE_STATUS_RECENT_WINDOW_SECONDS = Number(process.env.DEVICE_STATUS_RECENT_WINDOW_SECONDS || 900);
+
+const resolveDeviceStatus = (deveiceStateEnumId: any, deviceLastRequestTime: any, dbDeviceStatus: any) => {
+    const stateEnumId = Number(deveiceStateEnumId);
+
+    if (stateEnumId === ONLINE_DEVICE_STATE_ENUM_ID) {
+        return 'Online';
+    }
+
+    if (stateEnumId === OFFLINE_DEVICE_STATE_ENUM_ID) {
+        if (CommonMessage.IsValid(deviceLastRequestTime) === true) {
+            const nowTime = new Date().getTime();
+            const lastRequestTime = new Date(deviceLastRequestTime).getTime();
+            const timeDifferenceInSeconds = Math.floor((nowTime - lastRequestTime) / 1000);
+
+            if (Number.isFinite(timeDifferenceInSeconds) && timeDifferenceInSeconds >= 0 && timeDifferenceInSeconds <= DEVICE_STATUS_RECENT_WINDOW_SECONDS) {
+                return 'Online';
+            }
+        }
+
+        return 'Offline';
+    }
+
+    if (CommonMessage.IsValid(dbDeviceStatus) === true) {
+        return dbDeviceStatus;
+    }
+
+    return 'Offline';
+};
+
 class DashboardServices {
     constructor() {}
 
@@ -395,7 +427,7 @@ class DashboardServices {
     //   await addDeviceDataFromTest(apiResponse.data)
 
     
-       this.setDeviceLastRequestTimeAndConnection(lastRequestTime ,deviceStateEnumId,deviceDetails.lockId,req);
+    await this.setDeviceLastRequestTimeAndConnection(lastRequestTime ,deviceStateEnumId,deviceDetails.lockId,req);
 
         if  ( CommonMessage.IsValid(deviceDetails.lat)==true && CommonMessage.IsValid(deviceDetails.long)==true )
          {
@@ -517,7 +549,7 @@ class DashboardServices {
                     }
                     if(CommonMessage.IsValid(deviceDetails.deveice_state_enum_id)==false)
                         {        
-                                     deviceDetails.deveice_state_enum_id =null;
+                                     deviceDetails.deveice_state_enum_id ='23';
                          }
                     if(CommonMessage.IsValid(deviceDetails.powerOnOffStatusEnumId)==false)
                         {        
@@ -1121,7 +1153,7 @@ class DashboardServices {
                         batteryPercentage: row.battery,
                         batteryPercentageTime : row.lastupdateddateforbatterypercentage,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         internalBattV: row.internal_batt_v,
                         externalBattV: row.external_batt_v,
                         lockNumber: row.lock_number,
@@ -1182,7 +1214,7 @@ class DashboardServices {
                         batteryPercentage: row.battery ,
                         batteryPercentageTime : row.lastupdateddateforbatterypercentage,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         internalBattV: row.internal_batt_v,
                         externalBattV: row.external_batt_v,
                         lockNumber: row.lock_number,
@@ -1242,7 +1274,7 @@ class DashboardServices {
                         batteryPercentage: row.battery,
                         batteryPercentageTime : row.lastupdateddateforbatterypercentage,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         internalBattV: row.internal_batt_v,
                         externalBattV: row.external_batt_v,
                         lockNumber: row.lock_number,
@@ -1497,7 +1529,7 @@ class DashboardServices {
                         lockNumber: row.lock_number,
                         bikeName : row.bike_name,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                         device_lock_unlock_status: row.device_lock_unlock_status,
                         location: row.location,
@@ -1578,7 +1610,7 @@ class DashboardServices {
                         lockNumber: row.lock_number,
                         bikeName : row.bike_name,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                         device_lock_unlock_status: row.device_lock_unlock_status,
                         location: row.location,
@@ -1653,7 +1685,7 @@ class DashboardServices {
                         lockNumber: row.lock_number,
                         bikeName : row.bike_name,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                         device_lock_unlock_status: row.device_lock_unlock_status,
                         location: row.location,
@@ -1727,7 +1759,7 @@ class DashboardServices {
                         lockNumber: row.lock_number,
                         bikeName : row.bike_name,
                         deveiceStateEnumId: row.deveice_state_enum_id,
-                        deveiceStatus: row.deveice_status,
+                        deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                         device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                         device_lock_unlock_status: row.device_lock_unlock_status,
                         location: row.location,

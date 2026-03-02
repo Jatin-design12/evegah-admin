@@ -61,6 +61,7 @@ router.get('/api/v1/getRideBookedList', adminController.verifyTokenController, a
 router.get('/api/v1/getLatLogList', adminController.verifyTokenController, adminController.getLatLog);
 
 router.get('/api/v1/getAvaialableBikeList', adminController.verifyTokenController, adminController.getAvaialableBikeList);
+router.get('/api/v1/getDeviceStatusDebug', adminController.verifyTokenController, adminController.getDeviceStatusDebugController);
 router.post('/api/v1/addUpdateAreaDetail', adminController.verifyTokenController, areaController.addUpdateAreaDetailController);
 
 router.get('/api/v1/getMapAreaDetails', adminController.verifyTokenController, areaController.getMapAreaDetail);

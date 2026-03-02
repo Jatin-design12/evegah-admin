@@ -29,6 +29,34 @@ import { kClientName } from '../../constant/kritin-client-name';
 import adminController from '../../Controller/adminController/admin.controller';
 import { json } from 'body-parser';
 
+const missingStatusPacketAudit: any = {
+    totalCount: 0,
+    apiCount: 0,
+    mqttCount: 0
+};
+
+const addMissingStatusPacketAudit = (source: any, requestBody: any, data: any) => {
+    missingStatusPacketAudit.totalCount = Number(missingStatusPacketAudit.totalCount || 0) + 1;
+    if (source === 'mqtt') {
+        missingStatusPacketAudit.mqttCount = Number(missingStatusPacketAudit.mqttCount || 0) + 1;
+    } else {
+        missingStatusPacketAudit.apiCount = Number(missingStatusPacketAudit.apiCount || 0) + 1;
+    }
+
+    const auditPayload: any = {
+        tag: 'IOT_MISSING_STATUS_PACKET',
+        source: source,
+        totalCount: missingStatusPacketAudit.totalCount,
+        apiCount: missingStatusPacketAudit.apiCount,
+        mqttCount: missingStatusPacketAudit.mqttCount,
+        deviceId: requestBody?.deviceid || requestBody?.dId || null,
+        lockNumber: data?.dId || null,
+        createdAt: getUTCdate()
+    };
+
+    logger.error(JSON.stringify(auditPayload));
+};
+
 const addUpdateBikeInwardController = async (req: Request, res: Response) => {
     try {
         /* 	#swagger.tags = ['Admin-Inward']
@@ -1386,8 +1414,9 @@ async  function addDeviceDataFromTest(data: any) {
                    // state: 'stopped' me_state_enum_id offline,moving,idle,stopped
                    if (CommonMessage.IsValid(requestBody.status)== false)
                    {
+                       addMissingStatusPacketAudit('api', requestBody, data);
                        data.status =null;
-                       data.deveice_state_enum_id =null;
+                       data.deveice_state_enum_id = '23';// online (heartbeat packet received)
                    } 
                    else 
                    {  
@@ -2385,8 +2414,9 @@ async  function addDeviceDataFromTest(data: any) {
                   // console.log('Check device status ',requestBody.status)
                    if (CommonMessage.IsValid(requestBody.status)== false)
                    {
+                       addMissingStatusPacketAudit('mqtt', requestBody, data);
                        data.status =null;
-                       data.deveice_state_enum_id =null;
+                       data.deveice_state_enum_id = '23';// online (heartbeat packet received)
                    } 
                    else 
                    {  

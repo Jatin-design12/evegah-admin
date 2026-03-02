@@ -35,6 +35,128 @@ import utcdate from '../../helper/utcdate';
 import { stringify } from 'uuid';
 import  geoFance  from '../../helper/geofence';
 import config from '../../Config/config';
+
+const ONLINE_DEVICE_STATE_ENUM_ID = 23;
+const OFFLINE_DEVICE_STATE_ENUM_ID = 24;
+const DEVICE_STATUS_RECENT_WINDOW_SECONDS = Number(process.env.DEVICE_STATUS_RECENT_WINDOW_SECONDS || 900);
+
+const resolveDeviceStatus = (deveiceStateEnumId: any, deviceLastRequestTime: any, dbDeviceStatus: any) => {
+    const stateEnumId = Number(deveiceStateEnumId);
+
+    if (stateEnumId === ONLINE_DEVICE_STATE_ENUM_ID) {
+        return 'Online';
+    }
+
+    if (stateEnumId === OFFLINE_DEVICE_STATE_ENUM_ID) {
+        if (CommonMessage.IsValid(deviceLastRequestTime) === true) {
+            const nowTime = new Date().getTime();
+            const lastRequestTime = new Date(deviceLastRequestTime).getTime();
+            const timeDifferenceInSeconds = Math.floor((nowTime - lastRequestTime) / 1000);
+
+            if (Number.isFinite(timeDifferenceInSeconds) && timeDifferenceInSeconds >= 0 && timeDifferenceInSeconds <= DEVICE_STATUS_RECENT_WINDOW_SECONDS) {
+                return 'Online';
+            }
+        }
+
+        return 'Offline';
+    }
+
+    if (CommonMessage.IsValid(dbDeviceStatus) === true) {
+        return dbDeviceStatus;
+    }
+
+    return 'Offline';
+};
+
+const getDeviceStatusDebugController = async (req: Request, res: Response) => {
+    try {
+        const requestQuery: any = req.query;
+        const searchRef: any = requestQuery.searchRef || requestQuery.ref || requestQuery.lockNumber || requestQuery.deviceId;
+
+        if (CommonMessage.IsValid(searchRef) == false) {
+            return RequestResponse.validationError(res, 'Please provide searchRef (lock number / device id / imei / bike name)', status.info, []);
+        }
+
+        const deviceQuery: any = {
+            text: `select
+                    tld.id as lock_id,
+                    tld.lock_number,
+                    tld.device_id,
+                    tld.imei_number,
+                    tld.deveice_state_enum_id,
+                    (select tenum.enum_key from public.tbl_enum tenum where tenum.enum_id = tld.deveice_state_enum_id limit 1) as deveice_status,
+                    tld.device_last_request_time,
+                    tld.lastdevicerequesttime,
+                    case when tld.device_last_request_time is null then null
+                    else extract(epoch from ((now() at time zone 'utc') - tld.device_last_request_time))::bigint end as seconds_since_last_request,
+                    tpb.id as bike_id,
+                    tpb.bike_name
+                from inventory.tbl_lock_detail tld
+                left join inventory.tbl_product_bike tpb on tpb.lock_id = tld.id and tpb.status_enum_id = 1
+                where upper(trim(coalesce(tld.lock_number, ''))) = upper(trim($1))
+                or upper(trim(coalesce(tld.device_id, ''))) = upper(trim($1))
+                or upper(trim(coalesce(tld.imei_number, ''))) = upper(trim($1))
+                or upper(trim(coalesce(tpb.bike_name, ''))) = upper(trim($1))
+                limit 1;`,
+            values: [String(searchRef)]
+        };
+
+        const timeoutQuery: any = {
+            text: `select coalesce(enum_key::integer, 0) as offline_timeout_minutes from public.tbl_enum where enum_id = 49 limit 1`,
+            values: []
+        };
+
+        const [deviceResult, timeoutResult]: any = await Promise.all([client.query(deviceQuery), client.query(timeoutQuery)]);
+
+        if (deviceResult.rowCount == 0) {
+            return RequestResponse.success(res, 'Device reference not found', status.info, []);
+        }
+
+        const row: any = deviceResult.rows[0];
+        const computedStatus: any = resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status);
+        const secondsSinceLastRequest: any = CommonMessage.IsValid(row.seconds_since_last_request) ? Number(row.seconds_since_last_request) : null;
+        const offlineTimeoutMinutesFromDb: any = timeoutResult.rowCount > 0 ? Number(timeoutResult.rows[0].offline_timeout_minutes) : 0;
+        const offlineTimeoutSecondsFromDb: any = offlineTimeoutMinutesFromDb * 60;
+
+        let reason: any = 'fallback_from_db_status';
+        if (Number(row.deveice_state_enum_id) === ONLINE_DEVICE_STATE_ENUM_ID) {
+            reason = 'state_enum_online';
+        } else if (Number(row.deveice_state_enum_id) === OFFLINE_DEVICE_STATE_ENUM_ID) {
+            reason = computedStatus === 'Online' ? 'recent_heartbeat_override' : 'state_enum_offline';
+        }
+
+        const responseData: any = {
+            searchRef: String(searchRef),
+            raw: {
+                bikeId: row.bike_id,
+                bikeName: row.bike_name,
+                lockId: row.lock_id,
+                lockNumber: row.lock_number,
+                deviceId: row.device_id,
+                imeiNumber: row.imei_number,
+                deveiceStateEnumId: row.deveice_state_enum_id,
+                deveiceStatusFromDb: row.deveice_status,
+                deviceLastRequestTime: row.device_last_request_time,
+                lastDeviceRequestTime: row.lastdevicerequesttime,
+                secondsSinceLastRequest: secondsSinceLastRequest
+            },
+            computed: {
+                status: computedStatus,
+                reason: reason,
+                recentWindowSeconds: DEVICE_STATUS_RECENT_WINDOW_SECONDS,
+                offlineTimeoutMinutesFromDb: offlineTimeoutMinutesFromDb,
+                offlineTimeoutSecondsFromDb: offlineTimeoutSecondsFromDb,
+                exceedsDbOfflineTimeout: CommonMessage.IsValid(secondsSinceLastRequest) ? secondsSinceLastRequest > offlineTimeoutSecondsFromDb : null
+            }
+        };
+
+        return RequestResponse.success(res, apiMessage.success, status.success, responseData);
+    } catch (error: any) {
+        AddExceptionIntoDB(req,error);
+        return exceptionHandler(res, 1, error.message);
+    }
+};
+
 const GetEnumDetailService = async (req: Request, res: Response) => {
     try {
         // #swagger.tags = ['Master-Get']
@@ -2549,7 +2671,7 @@ const getRideBookedList = async (req: Request, res: Response) => {
                 batteryPercentage: row.battery ,
 
                 deveiceStateEnumId: row.deveice_state_enum_id,
-                deveiceStatus: row.deveice_status,
+                deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                 device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                 device_lock_unlock_status: row.device_lock_unlock_status,
                 location: row.location,
@@ -2707,7 +2829,7 @@ const getAvaialableBikeList = async (req: Request, res: Response) => {
                 lockNumber: row.lock_number,
                 bikeName : row.bike_name,
                 deveiceStateEnumId: row.deveice_state_enum_id,
-                deveiceStatus: row.deveice_status,
+                deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                 device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                 device_lock_unlock_status: row.device_lock_unlock_status,
                 location: row.location,
@@ -2909,7 +3031,7 @@ const getUndermaintenanceBikeList = async (req: Request, res: Response) => {
                 lockNumber: row.lock_number,
 
                 deveiceStateEnumId: row.deveice_state_enum_id,
-                deveiceStatus: row.deveice_status,
+                deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                 device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                 device_lock_unlock_status: row.device_lock_unlock_status,
                 location: row.location,
@@ -3875,7 +3997,7 @@ const setDeviceInstructionBeepOnOffController = async (requestQuery: any, res: R
                     lockNumber: row.lock_number,
                     bikeName : row.bike_name,
                     deveiceStateEnumId: row.deveice_state_enum_id,
-                    deveiceStatus: row.deveice_status,
+                    deveiceStatus: resolveDeviceStatus(row.deveice_state_enum_id, row.device_last_request_time, row.deveice_status),
                     device_lock_and_unlock_status: row.device_lock_and_unlock_status,
                     device_lock_unlock_status: row.device_lock_unlock_status,
                     location: row.location,
@@ -4427,6 +4549,7 @@ const setDeviceInstructionBeepOnOffController = async (requestQuery: any, res: R
         }
     };
 export default {
+    getDeviceStatusDebugController,
     adminLoginService,
     AdminUpdatePasswordService,
     ResetpasswordEMailGenerationService,

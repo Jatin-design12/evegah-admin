@@ -762,7 +762,7 @@ export const DB_CONFIGS = {
                 tpb.bike_name,
                                 tld.deveice_state_enum_id ,
                                 tld.lastupdateddateforbatterypercentage,
-                                coalesce(tld.device_last_request_time) as device_last_request_time,
+                                coalesce(tld.device_last_request_time, tld.lastdevicerequesttime) as device_last_request_time,
                                 (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tld.deveice_state_enum_id ) as deveice_status,
                                 tld.battery ,tld.internal_batt_v, tld.external_batt_v,
                                 tld.lock_number,tld.latitude, tld.longitude, 
@@ -832,7 +832,7 @@ export const DB_CONFIGS = {
                 tpb.bike_name,
                                 tld.deveice_state_enum_id ,
                                 tld.lastupdateddateforbatterypercentage,
-                                coalesce(tld.device_last_request_time) as device_last_request_time,
+                                coalesce(tld.device_last_request_time, tld.lastdevicerequesttime) as device_last_request_time,
                                 (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tld.deveice_state_enum_id ) as deveice_status,
                                 tld.battery ,tld.internal_batt_v, tld.external_batt_v,
                                 tld.lock_number,tld.latitude, tld.longitude, tpb.bike_booked_status,
@@ -900,7 +900,7 @@ export const DB_CONFIGS = {
                 tpb.bike_name,
                                 tld.deveice_state_enum_id ,
                                 tld.lastupdateddateforbatterypercentage,
-                                coalesce(tld.device_last_request_time) as device_last_request_time,
+                                coalesce(tld.device_last_request_time, tld.lastdevicerequesttime) as device_last_request_time,
                                 (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tld.deveice_state_enum_id ) as deveice_status,
                                 tld.battery ,tld.internal_batt_v, tld.external_batt_v,
                                 tld.lock_number,tld.latitude, tld.longitude, tpb.bike_booked_status,
@@ -1888,7 +1888,7 @@ city.map_state_id = st.map_state_id
           tbllock.battery  ,
           rbook.from_ride_time, 
           rbook.to_ride_time ,
-          coalesce(tbllock.device_last_request_time) as device_last_request_time,
+          coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
           tbllock.device_light_status_enum_id ,
            (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tbllock.device_light_status_enum_id)as deveice_light_status,
            tbllock.device_light_instruction_enum_id , 
@@ -1944,7 +1944,7 @@ city.map_state_id = st.map_state_id
           tbllock.longitude ,
           tbllock.altitude ,
           tbllock.battery  ,
-          coalesce(tbllock.device_last_request_time) as device_last_request_time,
+          coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
           tbllock.device_light_status_enum_id ,
            (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tbllock.device_light_status_enum_id)as deveice_light_status,
            tbllock.device_light_instruction_enum_id , 
@@ -2002,7 +2002,7 @@ city.map_state_id = st.map_state_id
         availableBikeList: () => {
             return ` SELECT  tblProdBike.id,
           
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_name,
@@ -2040,7 +2040,7 @@ city.map_state_id = st.map_state_id
 
         availableBikeListWithMapCitySearch: () => {
             return ` SELECT  tblProdBike.id,          
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_name,
@@ -2097,7 +2097,7 @@ city.map_state_id = st.map_state_id
 
         availableLockUnlockCardDetail: () => {
             return ` SELECT  tblProdBike.id,          
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_name,
@@ -2160,7 +2160,7 @@ city.map_state_id = st.map_state_id
         getUndermaintenanceBikeWithMapCitySearch: () => {
             return ` SELECT  tblProdBike.id,
             tblProdBike.bike_name,
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_booked_status,
@@ -2215,7 +2215,7 @@ city.map_state_id = st.map_state_id
         getUndermaintenanceBike: () => {
             return ` SELECT  tblProdBike.id,
             tblProdBike.bike_name,
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tbllock.deveice_state_enum_id ,
@@ -2254,7 +2254,7 @@ city.map_state_id = st.map_state_id
         
         getOutSideGeoFanceBikeListQ: () => {
             return ` 	 SELECT  tblProdBike.id,          
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_name,
@@ -2323,7 +2323,7 @@ city.map_state_id = st.map_state_id
 
         getOutSideGeoFanceBikeListMaCitySearchQ: () => {
             return ` SELECT  tblProdBike.id,          
-            coalesce(tbllock.device_last_request_time) as device_last_request_time,
+            coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
             tbllock.lock_number ,
             tblProdBike.lock_id,
             tblProdBike.bike_name,
@@ -2691,7 +2691,7 @@ city.map_state_id = st.map_state_id
    tbllock.longitude ,
    tbllock.altitude ,
    tbllock.battery  ,
-   coalesce(tbllock.device_last_request_time) as device_last_request_time,
+    coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
    tbllock.device_light_status_enum_id ,
     (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =tbllock.device_light_status_enum_id)as deveice_light_status,
     tbllock.device_light_instruction_enum_id , 
