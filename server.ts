@@ -25,7 +25,7 @@ var refundAPI = require('./routes/postmtxupdatetozaakpay');
 var cookieParser = require('cookie-parser');
 
 const router = express();
-const allowedOrigins = String(process.env.CORS_ALLOWED_ORIGINS || 'https://admin.evegah.com')
+const allowedOrigins = String(process.env.CORS_ALLOWED_ORIGINS || 'https://admin.evegah.com,http://localhost:4200,http://127.0.0.1:4200')
     .split(',')
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0);
