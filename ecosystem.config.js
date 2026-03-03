@@ -1,10 +1,15 @@
 module.exports = {
   apps : [{
-    script: 'index.js',
-    watch: '.'
-  }, {
-    script: './service-worker/',
-    watch: ['./service-worker']
+    name: 'evegah-backend',
+    script: 'build/server.js',
+    cwd: __dirname,
+    watch: false,
+    env: {
+      NODE_ENV: 'development'
+    },
+    env_production: {
+      NODE_ENV: 'production'
+    }
   }],
 
   deploy : {
@@ -15,7 +20,7 @@ module.exports = {
       repo : 'GIT_REPOSITORY',
       path : 'DESTINATION_PATH',
       'pre-deploy-local': '',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy' : 'npm install && npm run build && pm2 reload ecosystem.config.js --env production',
       'pre-setup': ''
     }
   }
