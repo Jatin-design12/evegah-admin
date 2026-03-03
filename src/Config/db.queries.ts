@@ -2009,6 +2009,10 @@ city.map_state_id = st.map_state_id
                              OR upper(trim(coalesce(tblProdBike.bike_name, ''))) = upper(trim($1))
                              OR cast(tbllock.id as text) = trim($1)
                              OR cast(tblProdBike.id as text) = trim($1)
+                                OR upper(trim(coalesce(tbllock.lock_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                OR upper(trim(coalesce(tbllock.device_id, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                OR upper(trim(coalesce(tbllock.imei_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                OR upper(trim(coalesce(tblProdBike.bike_name, ''))) LIKE '%' || upper(trim($1)) || '%'
                         ORDER BY tblProdBike.id DESC NULLS LAST
                         LIMIT 1`;
         },

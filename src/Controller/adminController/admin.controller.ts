@@ -90,6 +90,34 @@ const resolveDeviceStatus = (deveiceStateEnumId: any, deviceLastRequestTime: any
     return 'Offline';
 };
 
+const normalizeMapFilterQuery = (requestQuery: any) => {
+    if (CommonMessage.IsValid(requestQuery.mapCountryName) == false) {
+        requestQuery.mapCountryName = '';
+    }
+
+    if (CommonMessage.IsValid(requestQuery.mapStateName) == false) {
+        requestQuery.mapStateName = '';
+    }
+
+    if (CommonMessage.IsValid(requestQuery.mapCityName) == false) {
+        requestQuery.mapCityName = '';
+    }
+
+    if (CommonMessage.IsValid(requestQuery.zoneId) == false) {
+        requestQuery.zoneId = '0';
+    }
+
+    if (CommonMessage.IsValid(requestQuery.lockId) == false) {
+        requestQuery.lockId = '0';
+    }
+
+    if (CommonMessage.IsValid(requestQuery.rideBookingId) == false) {
+        requestQuery.rideBookingId = '0';
+    }
+
+    return requestQuery;
+};
+
 const getDeviceStatusDebugController = async (req: Request, res: Response) => {
     try {
         const requestQuery: any = req.query;
@@ -2675,7 +2703,8 @@ const getWellcomMSG = async (req: Request, res: Response) => {
 
 const getRideBookedList = async (req: Request, res: Response) => {
     try {
-        let requestQuery = req.query;
+        let requestQuery: any = req.query;
+        requestQuery = normalizeMapFilterQuery(requestQuery);
 
         // #swagger.tags = ['Admin-Bike-Produce']
         // #swagger.description = 'Pass bikeProduceId or 0  and status_enum_id = 0  '
@@ -2698,12 +2727,6 @@ const getRideBookedList = async (req: Request, res: Response) => {
                     }]
                      
         } */
-        
-        if(CommonMessage.IsValid(requestQuery.rideBookingId)==false)
-        {
-            
-            requestQuery.rideBookingId='0';
-        }
         
         let result: any = await BikeProduceServices.getBookedBikeList(requestQuery);
         let bikeProduceDetails = [];
@@ -2858,14 +2881,10 @@ const getAvaialableBikeList = async (req: Request, res: Response) => {
                     }]
                      
         } */
-        let requestQuery = req.query;
+                let requestQuery: any = req.query;
+                requestQuery = normalizeMapFilterQuery(requestQuery);
          let geoFenceInOut :any ='';
-         
 
-          if(CommonMessage.IsValid(requestQuery.lockId)==false)
-        {
-            requestQuery.lockId='0';
-        }
         let result: any;
         if(requestQuery.cardDataFor=='PowerOnOrUnlock')
         {
@@ -3070,13 +3089,9 @@ const getUndermaintenanceBikeList = async (req: Request, res: Response) => {
                     }]
                      
         } */
-        let requestQuery = req.query;
-        
+        let requestQuery: any = req.query;
+        requestQuery = normalizeMapFilterQuery(requestQuery);
 
- if(CommonMessage.IsValid(requestQuery.lockId)==false)
-        {
-            requestQuery.lockId='0';
-        }
         let result: any = await BikeProduceServices.getUndermaintenanceBikeList(requestQuery);
         let bikeProduceDetails = [];
         let geoFenceInOut :any =''
@@ -4124,7 +4139,8 @@ const setDeviceInstructionBeepOnOffController = async (requestQuery: any, res: R
     
     const getBikeDetailZoneWiseController = async (req: Request, res: Response) => {
         try {
-            let requestQuery = req.query;
+            let requestQuery: any = req.query;
+            requestQuery = normalizeMapFilterQuery(requestQuery);
             let getOutSideGeoFanceBikeListResult: any=[];
             let getActiveBikeListResult: any=[];
             let getAvaialableBikeListResult: any=[];
