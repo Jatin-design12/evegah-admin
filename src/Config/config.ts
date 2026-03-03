@@ -11,8 +11,8 @@ const POSTGRE_HOST = process.env.POSTGRE_HOST ;
 const POSTGRE_DATABASE = process.env.POSTGRE_DATABASE || process.env.POSTGRE_DATBASE ;
 const POSTGRE_USER = process.env.POSTGRE_USER // ;
 const POSTGRE_PASSWORD = process.env.POSTGRE_PASSWORD // ;
-const FRONT_END_REDIRECT_URL = process.env.FRONT_END_REDIRECT_URL //|| ;
-const FRONT_END_USER_REDIRECT_URL = process.env.FRONT_END_REDIRECT_URL //
+const FRONT_END_REDIRECT_URL = process.env.FRONT_END_REDIRECT_URL || 'https://admin.evegah.com';
+const FRONT_END_USER_REDIRECT_URL = process.env.FRONT_END_USER_REDIRECT_URL || FRONT_END_REDIRECT_URL;
 const GOOGLE_MAP_KEY = process.env.GOOGLE_MAP_KEY
 const POSTGRE = {
     host: POSTGRE_HOST,
@@ -23,6 +23,8 @@ const POSTGRE = {
 let SERVER_HOSTNAME: string | undefined;
 let SERVER_PORT: any;
 let PREFIX_FILE_PATH: string;
+let SERVER_PROTOCOL: string;
+let PUBLIC_BASE_URL: string | undefined;
 
 const ACCESS_TOKEN_SECRET_KEY = 'f1889cd5d0dd8cfbef7d58dbf9140619cc2c9ad6f85c9bee98506fa2643ccc50';
 const REFRESH_TOKEN_SECRET_KEY = process.env.REFRESH_TOKEN_SECRET_KEY;
@@ -34,13 +36,26 @@ const JWT_TOKEN = {
     RESET_TOKEN_SECRET_KEY: RESET_TOKEN_SECRET_KEY
 };
 
+const normalizeHostName = (hostValue: any) => {
+    return String(hostValue || '')
+        .trim()
+        .replace(/^https?:\/\//i, '')
+        .replace(/\/$/, '');
+};
 
+SERVER_HOSTNAME = normalizeHostName(process.env.SERVER_HOSTNAME || 'admin.evegah.com');
+SERVER_PROTOCOL = String(process.env.SERVER_PROTOCOL || 'https').toLowerCase();
+SERVER_PORT = process.env.SERVER_PORT;
+PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL;
 
-SERVER_HOSTNAME = process.env.SERVER_HOSTNAME ;
-SERVER_PORT = process.env.SERVER_PORT   //|| 9002;
-
-
-PREFIX_FILE_PATH = 'http://' + SERVER_HOSTNAME + ':' + SERVER_PORT + '/';
+if (PUBLIC_BASE_URL && PUBLIC_BASE_URL.trim() !== '') {
+    PREFIX_FILE_PATH = PUBLIC_BASE_URL.trim().replace(/\/$/, '') + '/';
+} else {
+    const defaultPortForProtocol = (SERVER_PROTOCOL === 'https' ? '443' : '80');
+    const shouldAppendPort = SERVER_PORT && String(SERVER_PORT) !== defaultPortForProtocol;
+    const portPart = shouldAppendPort ? `:${SERVER_PORT}` : '';
+    PREFIX_FILE_PATH = `${SERVER_PROTOCOL}://${SERVER_HOSTNAME}${portPart}/`;
+}
 
 const SERVER = {
     hostname: SERVER_HOSTNAME,

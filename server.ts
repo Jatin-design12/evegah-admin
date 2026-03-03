@@ -25,6 +25,10 @@ var refundAPI = require('./routes/postmtxupdatetozaakpay');
 var cookieParser = require('cookie-parser');
 
 const router = express();
+const allowedOrigins = String(process.env.CORS_ALLOWED_ORIGINS || 'https://admin.evegah.com')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
 
 router.set('view engine', 'ejs');
 
@@ -81,7 +85,16 @@ router.use(express.text());
 /** rules of ourAPI  */
 
 router.use((req, res, next) => {
-   res.header(`Access-control-Allow-Origin`, '*');
+    const requestOrigin = String(req.headers.origin || '');
+    if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+        res.header('Access-Control-Allow-Origin', requestOrigin);
+    } else if (!requestOrigin) {
+        res.header('Access-Control-Allow-Origin', '*');
+    } else {
+        res.header('Access-Control-Allow-Origin', allowedOrigins[0] || 'https://admin.evegah.com');
+    }
+    res.header('Vary', 'Origin');
+
     if(req.path != config.zaakPaymentConfigKeys.ZAAKPAY_API_PREFIX +'/'+ config.zaakPaymentConfigKeys.ZAAKPAY_TRANSACTIONPAGE && 
        req.path !=config.zaakPaymentConfigKeys.ZAAKPAY_API_PREFIX +'/'+ config.zaakPaymentConfigKeys.ZAAKPAY_RESPONSEPAGE && 
        req.path !=config.zaakPaymentConfigKeys.ZAAKPAY_API_PREFIX +'/'+ config.zaakPaymentConfigKeys.ZAAKPAY_CHECKTRANSACTIONSTATUSPAGE && 
@@ -89,7 +102,7 @@ router.use((req, res, next) => {
      {
         res.header(`Content-Type`, `application/json`);
      }
-    res.header(`Access-control-Allow-Headers`, `Origin,X-Requested-With,Content-Type,Accept,Authorization`);
+    res.header(`Access-Control-Allow-Headers`, `Origin,X-Requested-With,Content-Type,Accept,Authorization`);
   
     if (req.method == `OPTIONS`) {
         res.header(`Access-Control-Allow-Methods`, `GET, PATCH, DELETE, POST ,PUT`);
