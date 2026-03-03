@@ -59,6 +59,19 @@ router.use((req, res, next) => {
     next();
 });
 
+router.use((req, res, next) => {
+    const apiPrefix = process.env.API_PREFIX || '/api';
+    const normalizedPrefix = apiPrefix.endsWith('/') ? apiPrefix.slice(0, -1) : apiPrefix;
+    const versionPrefix = `${normalizedPrefix}/v1/`;
+    const legacyVersionPrefix = `${normalizedPrefix}${normalizedPrefix}/v1/`;
+
+    if (req.url.startsWith(versionPrefix) && !req.url.startsWith(legacyVersionPrefix)) {
+        req.url = `${normalizedPrefix}${req.url}`;
+    }
+
+    next();
+});
+
 /** Parser the body of the request */
 
 router.use(express.urlencoded({ extended: true }));

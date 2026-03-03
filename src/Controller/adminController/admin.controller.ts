@@ -39,6 +39,9 @@ import config from '../../Config/config';
 const ONLINE_DEVICE_STATE_ENUM_ID = 23;
 const OFFLINE_DEVICE_STATE_ENUM_ID = 24;
 const DEVICE_STATUS_RECENT_WINDOW_SECONDS = Number(process.env.DEVICE_STATUS_RECENT_WINDOW_SECONDS || 900);
+const DASHBOARD_CARD_CACHE_WINDOW_MS = Number(process.env.DASHBOARD_CARD_CACHE_WINDOW_MS || 10000);
+let dashboardCardCacheData: any = null;
+let dashboardCardCacheAt = 0;
 
 const resolveDeviceStatus = (deveiceStateEnumId: any, deviceLastRequestTime: any, dbDeviceStatus: any) => {
     const stateEnumId = Number(deveiceStateEnumId);
@@ -1119,6 +1122,11 @@ const lockAndUnlockDeviceController = async (req: Request, res: Response) => {
 
 const getDashboardCardController = async (req: Request, res: Response) => {
     try {
+        const now = Date.now();
+        if (dashboardCardCacheData && now - dashboardCardCacheAt <= DASHBOARD_CARD_CACHE_WINDOW_MS) {
+            return RequestResponse.success(res, apiMessage.success, status.success, dashboardCardCacheData);
+        }
+
         // #swagger.tags = ['Admin-Dashboard']
         // #swagger.description = 'card'
         let result: any = await DashboardServices.getDashboardCount(req);
@@ -1151,12 +1159,19 @@ const getDashboardCardController = async (req: Request, res: Response) => {
                     pendingWithdrawRequest: getCountValue(11)
                 }
             ];
+            dashboardCardCacheData = dashboardArray;
+            dashboardCardCacheAt = now;
             return RequestResponse.success(res, apiMessage.success, status.success, dashboardArray);
         } else {
             return RequestResponse.success(res, apiMessage.noDataFound, status.success, null);
         }
     } catch (error: any) {
         AddExceptionIntoDB(req,error);
+
+        if (dashboardCardCacheData) {
+            return RequestResponse.success(res, apiMessage.success, status.success, dashboardCardCacheData);
+        }
+
         return exceptionHandler(res, 1, error.message);
     }
 };
