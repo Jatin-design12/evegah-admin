@@ -4,6 +4,7 @@ import { getUTCdate } from '../../helper/datetime';
 import GetUserServices from '../userServices/user.get.services';
 import  CommonMessage  from '../../helper/common.validation';
 import adminControllers from '../../Controller/adminController/admin.controller';
+import logger from '../../Config/logging';
 
 import adminLogDeviceInformationServices from '../../services/adminServices/admin.logDeviceInformation.services';
 import status from '../../helper/status';  
@@ -169,6 +170,9 @@ class DashboardServices {
                 let result = await client.query(query);
                 resolve(result);
             } catch (error) {
+                logger.error('[DashboardServices.getDashboardCount] query failed: ' + query.text);
+                logger.error('[DashboardServices.getDashboardCount] error: ' + (error as any)?.message);
+                logger.error('[DashboardServices.getDashboardCount] stack: ' + ((error as any)?.stack || 'no-stack'));
                 req.dbquery = query.text;
                 req.dbqueryParameters =query.values ;
                 AddExceptionIntoDB(req,error);

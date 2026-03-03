@@ -1184,6 +1184,9 @@ const getDashboardCardController = async (req: Request, res: Response) => {
             return RequestResponse.success(res, apiMessage.success, status.success, emptyDashboardArray);
         }
     } catch (error: any) {
+        logger.error('[getDashboardCardController] error: ' + (error?.message || error));
+        logger.error('[getDashboardCardController] stack: ' + (error?.stack || 'no-stack'));
+        logger.error('[getDashboardCardController] url: ' + req.originalUrl + ', query: ' + JSON.stringify(req.query || {}));
         try {
             AddExceptionIntoDB(req, error);
         } catch (loggingError) {
