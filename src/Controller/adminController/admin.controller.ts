@@ -43,6 +43,25 @@ const DASHBOARD_CARD_CACHE_WINDOW_MS = Number(process.env.DASHBOARD_CARD_CACHE_W
 let dashboardCardCacheData: any = null;
 let dashboardCardCacheAt = 0;
 
+const buildDefaultDashboardCard = () => {
+    return [
+        {
+            bookedBike: 0,
+            availableBike: 0,
+            underMaintenanceBike: 0,
+            totalBike: 0,
+            totalEarning: 0,
+            battery0To30: 0,
+            battery30To50: 0,
+            batteryMore50: 0,
+            bikeOutSideOfGeoFance: 0,
+            unlockOrPowerOnCount: 0,
+            availableUnlockOrPowerOnCount: 0,
+            pendingWithdrawRequest: 0
+        }
+    ];
+};
+
 const resolveDeviceStatus = (deveiceStateEnumId: any, deviceLastRequestTime: any, dbDeviceStatus: any) => {
     const stateEnumId = Number(deveiceStateEnumId);
 
@@ -1142,37 +1161,43 @@ const getDashboardCardController = async (req: Request, res: Response) => {
         };
         
         if (result.rowCount > 0) {
-            let dashboardArray = [
-                {
-                    bookedBike: getCountValue(0),
-                    availableBike: getCountValue(1),
-                    underMaintenanceBike: getCountValue(2),
-                    totalBike: getCountValue(3),
-                    totalEarning: getCountValue(4),
-
-                    battery0To30: getCountValue(5),
-                    battery30To50: getCountValue(6),
-                    batteryMore50: getCountValue(7),
-                    bikeOutSideOfGeoFance: getCountValue(8),
-                    unlockOrPowerOnCount: getCountValue(9),
-                    availableUnlockOrPowerOnCount: getCountValue(10),
-                    pendingWithdrawRequest: getCountValue(11)
-                }
-            ];
+            let dashboardArray = buildDefaultDashboardCard();
+            dashboardArray[0].bookedBike = getCountValue(0);
+            dashboardArray[0].availableBike = getCountValue(1);
+            dashboardArray[0].underMaintenanceBike = getCountValue(2);
+            dashboardArray[0].totalBike = getCountValue(3);
+            dashboardArray[0].totalEarning = getCountValue(4);
+            dashboardArray[0].battery0To30 = getCountValue(5);
+            dashboardArray[0].battery30To50 = getCountValue(6);
+            dashboardArray[0].batteryMore50 = getCountValue(7);
+            dashboardArray[0].bikeOutSideOfGeoFance = getCountValue(8);
+            dashboardArray[0].unlockOrPowerOnCount = getCountValue(9);
+            dashboardArray[0].availableUnlockOrPowerOnCount = getCountValue(10);
+            dashboardArray[0].pendingWithdrawRequest = getCountValue(11);
             dashboardCardCacheData = dashboardArray;
             dashboardCardCacheAt = now;
             return RequestResponse.success(res, apiMessage.success, status.success, dashboardArray);
         } else {
-            return RequestResponse.success(res, apiMessage.noDataFound, status.success, null);
+            const emptyDashboardArray = buildDefaultDashboardCard();
+            dashboardCardCacheData = emptyDashboardArray;
+            dashboardCardCacheAt = now;
+            return RequestResponse.success(res, apiMessage.success, status.success, emptyDashboardArray);
         }
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        try {
+            AddExceptionIntoDB(req, error);
+        } catch (loggingError) {
+            logger.error('Failed to persist dashboard exception: ' + loggingError);
+        }
 
         if (dashboardCardCacheData) {
             return RequestResponse.success(res, apiMessage.success, status.success, dashboardCardCacheData);
         }
 
-        return exceptionHandler(res, 1, error.message);
+        const fallbackDashboardArray = buildDefaultDashboardCard();
+        dashboardCardCacheData = fallbackDashboardArray;
+        dashboardCardCacheAt = Date.now();
+        return RequestResponse.success(res, apiMessage.success, status.success, fallbackDashboardArray);
     }
 };
 // device api using query parameter
