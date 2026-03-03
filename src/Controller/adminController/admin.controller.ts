@@ -1122,23 +1122,33 @@ const getDashboardCardController = async (req: Request, res: Response) => {
         // #swagger.tags = ['Admin-Dashboard']
         // #swagger.description = 'card'
         let result: any = await DashboardServices.getDashboardCount(req);
+
+        const getCountValue = (index: number) => {
+            const rawValue: any = result?.rows?.[index]?.count;
+            if (CommonMessage.IsValid(rawValue) == false) {
+                return 0;
+            }
+
+            const numericValue = Number(rawValue);
+            return Number.isFinite(numericValue) ? numericValue : 0;
+        };
         
         if (result.rowCount > 0) {
             let dashboardArray = [
                 {
-                    bookedBike: result.rows[0] .count,
-                    availableBike: result.rows[1].count,
-                    underMaintenanceBike: result.rows[2].count,
-                    totalBike: result.rows[3].count,
-                    totalEarning: result.rows[4].count,
+                    bookedBike: getCountValue(0),
+                    availableBike: getCountValue(1),
+                    underMaintenanceBike: getCountValue(2),
+                    totalBike: getCountValue(3),
+                    totalEarning: getCountValue(4),
 
-                    battery0To30: result.rows[5].count,
-                    battery30To50: result.rows[6].count,
-                    batteryMore50: result.rows[7].count,
-                    bikeOutSideOfGeoFance: result.rows[8].count,
-                    unlockOrPowerOnCount: result.rows[9].count,
-                    availableUnlockOrPowerOnCount: result.rows[10].count,
-                    pendingWithdrawRequest: result.rows[11].count
+                    battery0To30: getCountValue(5),
+                    battery30To50: getCountValue(6),
+                    batteryMore50: getCountValue(7),
+                    bikeOutSideOfGeoFance: getCountValue(8),
+                    unlockOrPowerOnCount: getCountValue(9),
+                    availableUnlockOrPowerOnCount: getCountValue(10),
+                    pendingWithdrawRequest: getCountValue(11)
                 }
             ];
             return RequestResponse.success(res, apiMessage.success, status.success, dashboardArray);
@@ -2741,7 +2751,14 @@ const getLatLog = async (req: Request, res: Response) => {
                      
         } */
 
-        let requestQuery = req.query;
+        let requestQuery: any = req.query;
+        const searchRef: any = requestQuery.searchRef || requestQuery.deviceId || requestQuery.lockNumber || requestQuery.bikeName || requestQuery.vehicleNo || requestQuery.bikeId;
+
+        if (CommonMessage.IsValid(searchRef) == false) {
+            return RequestResponse.validationError(res, 'Please provide searchRef / bikeName / lockNumber / deviceId', status.info, []);
+        }
+
+        requestQuery.deviceId = String(searchRef);
         let result: any = await BikeProduceServices.getDeveiceLatLog(requestQuery);
         let bikeProduceDetails = [];
 
@@ -2749,9 +2766,13 @@ const getLatLog = async (req: Request, res: Response) => {
         for (let row of result.rows) {
 
             bikeProduceDetails.push({
-                id: row.id,
+                id: row.bike_id || row.lock_id,
+                bikeId: row.bike_id,
+                bikeName: row.bike_name,
                 lockId: row.lock_id,
                 lockNumber: row.lock_number,
+                deviceId: row.device_id,
+                imeiNumber: row.imei_number,
                 location: row.location,
                 latitude: row.latitude,
                 longitude: row.longitude,

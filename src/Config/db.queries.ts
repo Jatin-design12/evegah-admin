@@ -453,7 +453,7 @@ export const DB_CONFIGS = {
                   union all
                   SELECT count(id) as count FROM  inventory.tbl_product_bike  WHERE status_enum_id=1
                   union all
-                  SELECT sum(total_ride_amount) as count FROM  admin.tbl_ride_booking 
+                  SELECT coalesce(sum(total_ride_amount),0) as count FROM  admin.tbl_ride_booking 
                   union all
                   
               (select  count(tld.lock_number)
@@ -461,7 +461,7 @@ export const DB_CONFIGS = {
 			   inner join inventory.tbl_product_bike pb on
 			   pb.lock_id =tld.id and pb.status_enum_id =1
 			   where registartion_status = true and 
-             CAST(coalesce(tld.battery,'0') AS numeric)  between 0 and 20) 
+                         (CASE WHEN trim(coalesce(tld.battery,'')) ~ '^[0-9]+(\.[0-9]+)?$' THEN trim(tld.battery)::numeric ELSE 0 END) between 0 and 20) 
              
               union all
              (select  count(tld.lock_number)
@@ -469,14 +469,14 @@ export const DB_CONFIGS = {
 			  inner join inventory.tbl_product_bike pb on
 			   pb.lock_id =tld.id and pb.status_enum_id =1
 			  where registartion_status = true and
-             CAST(coalesce(tld.battery,'0') AS numeric)  >20 and CAST(coalesce(tld.battery,'0') AS numeric)  <=50) 
+                         (CASE WHEN trim(coalesce(tld.battery,'')) ~ '^[0-9]+(\.[0-9]+)?$' THEN trim(tld.battery)::numeric ELSE 0 END) >20 and (CASE WHEN trim(coalesce(tld.battery,'')) ~ '^[0-9]+(\.[0-9]+)?$' THEN trim(tld.battery)::numeric ELSE 0 END) <=50) 
             union all
             (select  count(tld.lock_number)
               from   inventory.tbl_lock_detail  tld 
 			 inner join inventory.tbl_product_bike pb on
 			   pb.lock_id =tld.id and pb.status_enum_id =1
 			 where registartion_status = true and
-             CAST(coalesce(tld.battery,'0') AS numeric) >50)
+                         (CASE WHEN trim(coalesce(tld.battery,'')) ~ '^[0-9]+(\.[0-9]+)?$' THEN trim(tld.battery)::numeric ELSE 0 END) >50)
              union all 
              (select  count(id)
              from inventory.tbl_product_bike WHERE status_enum_id=1 and geofence_inout_enum_id = 63 limit 1)
@@ -1989,14 +1989,28 @@ city.map_state_id = st.map_state_id
         
         deviceLatLog: () => {
             return `SELECT 
-            tbllock.lock_number ,
-            tbllock.id, 
-           tbllock.location ,
-           tbllock.latitude ,
-           tbllock.longitude ,
-           tbllock.altitude 
-                   FROM  inventory.tbl_lock_detail tbllock                                         
-                   where tbllock.lock_number = $1`;
+                        tbllock.id as lock_id,
+                        tbllock.lock_number,
+                        tbllock.device_id,
+                        tbllock.imei_number,
+                        tblProdBike.id as bike_id,
+                        tblProdBike.bike_name,
+                        tbllock.location,
+                        tbllock.latitude,
+                        tbllock.longitude,
+                        tbllock.altitude
+                        FROM inventory.tbl_lock_detail tbllock
+                        LEFT JOIN inventory.tbl_product_bike tblProdBike
+                            ON tblProdBike.lock_id = tbllock.id
+                            AND tblProdBike.status_enum_id = 1
+                        WHERE upper(trim(coalesce(tbllock.lock_number, ''))) = upper(trim($1))
+                             OR upper(trim(coalesce(tbllock.device_id, ''))) = upper(trim($1))
+                             OR upper(trim(coalesce(tbllock.imei_number, ''))) = upper(trim($1))
+                             OR upper(trim(coalesce(tblProdBike.bike_name, ''))) = upper(trim($1))
+                             OR cast(tbllock.id as text) = trim($1)
+                             OR cast(tblProdBike.id as text) = trim($1)
+                        ORDER BY tblProdBike.id DESC NULLS LAST
+                        LIMIT 1`;
         },
 
         availableBikeList: () => {
