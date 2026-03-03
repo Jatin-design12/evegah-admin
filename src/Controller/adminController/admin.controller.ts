@@ -2818,14 +2818,16 @@ const getLatLog = async (req: Request, res: Response) => {
         } */
 
         let requestQuery: any = req.query;
-        const searchRef: any = requestQuery.searchRef || requestQuery.deviceId || requestQuery.lockNumber || requestQuery.bikeName || requestQuery.vehicleNo || requestQuery.bikeId;
+        const searchRef: any = requestQuery.searchRef || requestQuery.deviceId || requestQuery.lockNumber || requestQuery.bikeName || requestQuery.vehicleNo || requestQuery.bikeId || '';
 
-        if (CommonMessage.IsValid(searchRef) == false) {
-            return RequestResponse.validationError(res, 'Please provide searchRef / bikeName / lockNumber / deviceId', status.info, []);
+        let result: any;
+        if (CommonMessage.IsValid(searchRef) == true) {
+            requestQuery.deviceId = String(searchRef);
+            result = await BikeProduceServices.getDeveiceLatLog(requestQuery);
+        } else {
+            result = await BikeProduceServices.getDeveiceLatLogAll({ searchRef: '' });
         }
 
-        requestQuery.deviceId = String(searchRef);
-        let result: any = await BikeProduceServices.getDeveiceLatLog(requestQuery);
         let bikeProduceDetails = [];
 
 
@@ -2843,6 +2845,7 @@ const getLatLog = async (req: Request, res: Response) => {
                 latitude: row.latitude,
                 longitude: row.longitude,
                 altitude: row.altitude,
+                deviceLastRequestTime: row.device_last_request_time,
 
             });
         }

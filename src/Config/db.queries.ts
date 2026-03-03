@@ -2017,6 +2017,47 @@ city.map_state_id = st.map_state_id
                         LIMIT 1`;
         },
 
+        deviceLatLogAll: () => {
+            return `SELECT
+                        tbllock.id as lock_id,
+                        tbllock.lock_number,
+                        tbllock.device_id,
+                        tbllock.imei_number,
+                        tblProdBike.id as bike_id,
+                        tblProdBike.bike_name,
+                        tbllock.location,
+                        tbllock.latitude,
+                        tbllock.longitude,
+                        tbllock.altitude,
+                        coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time
+                    FROM inventory.tbl_lock_detail tbllock
+                    LEFT JOIN LATERAL (
+                        SELECT id, bike_name, status_enum_id
+                        FROM inventory.tbl_product_bike
+                        WHERE lock_id = tbllock.id
+                        ORDER BY CASE WHEN status_enum_id = 1 THEN 0 ELSE 1 END, id DESC
+                        LIMIT 1
+                    ) tblProdBike ON true
+                    WHERE (
+                        trim($1) = ''
+                        OR upper(trim(coalesce(tbllock.lock_number, ''))) = upper(trim($1))
+                        OR upper(trim(coalesce(tbllock.device_id, ''))) = upper(trim($1))
+                        OR upper(trim(coalesce(tbllock.imei_number, ''))) = upper(trim($1))
+                        OR upper(trim(coalesce(tblProdBike.bike_name, ''))) = upper(trim($1))
+                        OR cast(tbllock.id as text) = trim($1)
+                        OR cast(tblProdBike.id as text) = trim($1)
+                        OR upper(trim(coalesce(tbllock.lock_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                        OR upper(trim(coalesce(tbllock.device_id, ''))) LIKE '%' || upper(trim($1)) || '%'
+                        OR upper(trim(coalesce(tbllock.imei_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                        OR upper(trim(coalesce(tblProdBike.bike_name, ''))) LIKE '%' || upper(trim($1)) || '%'
+                    )
+                    AND nullif(trim(cast(tbllock.latitude as text)), '') IS NOT NULL
+                    AND nullif(trim(cast(tbllock.longitude as text)), '') IS NOT NULL
+                    AND trim(cast(tbllock.latitude as text)) NOT IN ('0', '0.0')
+                    AND trim(cast(tbllock.longitude as text)) NOT IN ('0', '0.0')
+                    ORDER BY coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) DESC NULLS LAST, tbllock.id DESC`;
+        },
+
         availableBikeList: () => {
             return ` SELECT  tblProdBike.id,
           

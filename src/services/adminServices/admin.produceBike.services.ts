@@ -316,6 +316,22 @@ class BikeProduce {
         });
     }
 
+    async getDeveiceLatLogAll(deviceData: any) {
+        let query: any = {
+            text: DB_CONFIGS.bikeProduce.deviceLatLogAll(),
+            values: [deviceData.searchRef || '']
+        };
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
     async getAvailableBikeList(bikeDetail:any ) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.availableBikeListWithMapCitySearch(),
