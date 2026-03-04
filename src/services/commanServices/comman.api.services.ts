@@ -13,12 +13,20 @@ import {  exceptionHandler,AddExceptionIntoDB  } from '../../helper/responseHand
 const fs = require('fs');
 const path = require('path');
 
+const resolveUploadDirectory = () => {
+    const configured = String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim();
+    if (!configured) {
+        return path.resolve(process.cwd(), 'upload');
+    }
+    return path.isAbsolute(configured) ? configured : path.resolve(process.cwd(), configured);
+};
+
 export const FileDelete = async (req: Request, res: Response) => {
     try {
         // delete from local hostinger upload directory
         const filename = String(req.body.file_name || '').trim();
         if (filename) {
-            const uploadDirectory = path.resolve(process.cwd(), String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim());
+            const uploadDirectory = resolveUploadDirectory();
             const filePath = path.join(uploadDirectory, filename);
             fs.unlink(filePath, (err: NodeJS.ErrnoException | null) => {
                 if (err && err.code !== 'ENOENT') {
@@ -84,10 +92,9 @@ const uploadFileToS3 = async (file: any) => {
         let filetype = filename[filename.length - 1].toLowerCase();
         let id = uuidv4();
         const uniqueFileName = `${id}.${filename[0]}.${filetype}`;
-        const storageProvider = String(process.env.STORAGE_PROVIDER || 'aws').trim().toLowerCase();
         // will always use hostinger/local filesystem
         if (['pdf','doc','docx','xlsx','xls','png','jpg','jpeg','mp4'].includes(filetype)) {
-            const uploadDirectory = path.resolve(process.cwd(), String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim());
+            const uploadDirectory = resolveUploadDirectory();
 
             fs.mkdir(uploadDirectory, { recursive: true }, (mkdirError: Error) => {
                 if (mkdirError) {
@@ -99,6 +106,8 @@ const uploadFileToS3 = async (file: any) => {
                     if (writeError) {
                         return reject(writeError);
                     }
+
+                    logger.info(`File uploaded to: ${localFilePath}`);
 
                     resolve({
                         unique_file_name: uniqueFileName,

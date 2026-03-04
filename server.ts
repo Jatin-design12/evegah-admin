@@ -25,6 +25,20 @@ var refundAPI = require('./routes/postmtxupdatetozaakpay');
 var cookieParser = require('cookie-parser');
 
 const router = express();
+const resolveUploadDirectory = () => {
+    const configured = String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim();
+    if (!configured) {
+        return path.resolve(process.cwd(), 'upload');
+    }
+    return path.isAbsolute(configured) ? configured : path.resolve(process.cwd(), configured);
+};
+
+const uploadDirectory = resolveUploadDirectory();
+try {
+    require('fs').mkdirSync(uploadDirectory, { recursive: true });
+} catch (error) {
+    logger.warn('Unable to ensure upload directory exists: ' + (error instanceof Error ? error.message : String(error)));
+}
 const allowedOrigins = String(process.env.CORS_ALLOWED_ORIGINS || 'https://admin.evegah.com,http://localhost:4200,http://127.0.0.1:4200')
     .split(',')
     .map((origin) => origin.trim())
@@ -60,8 +74,8 @@ process.on('unhandledRejection', (reason: any, promise) => {
 });
 
 
-router.use(process.env.API_PREFIX + '/assets', express.static(path.join(__dirname, 'upload')));
-router.use(process.env.API_PREFIX + '/upload', express.static('upload'));
+router.use(process.env.API_PREFIX + '/assets', express.static(uploadDirectory));
+router.use(process.env.API_PREFIX + '/upload', express.static(uploadDirectory));
 
 router.get((process.env.API_PREFIX || '/api') + '/', (req: Request, res: Response) => {
     return res.status(200).json({ message: 'API is running', status: 'SUCCESS' });
@@ -156,6 +170,7 @@ console.log(getUTCdate());
 
 console.log('Shri Ram');
 console.log('DB host:', config.postgre?.host || 'not set');
+console.log('Upload directory:', uploadDirectory);
 // router.use((error: any, req: any, res: any, next: any) => {
 //     res.status(error.status || 500);
 //     res.json({ error: error.message });
