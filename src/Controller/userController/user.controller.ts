@@ -83,10 +83,27 @@ const getUserController = async (req: Request, res: Response) => {
                      
         } */
 
-        let requestQuery = req.query;
+        let requestQuery: any = { ...req.query };
+        const updatedSinceRaw = typeof requestQuery.updatedSince === 'string' ? requestQuery.updatedSince : '';
+        let updatedSinceIso: string | null = null;
+        if (CommonMessage.IsValid(updatedSinceRaw) == true) {
+            const updatedSinceDate = new Date(updatedSinceRaw);
+            if (isNaN(updatedSinceDate.getTime())) {
+                return RequestResponse.validationError(
+                    res,
+                    CommonMessage.ErrorMessage(5, 'updatedSince'),
+                    status.error,
+                    []
+                );
+            }
+            updatedSinceIso = updatedSinceDate.toISOString();
+        }
+        requestQuery.updatedSince = updatedSinceIso;
+
         let result: any = await GetUserServices.getUserDetails(requestQuery);
         
         let userDetails = [];
+        let maxSyncTimestamp = 0;
         
         let distance_in_meters :any =0;
         for (let row of result.rows) {    
@@ -100,6 +117,15 @@ const getUserController = async (req: Request, res: Response) => {
          {
             distance_in_meters = parseFloat(row.total_distance_in_meters).toFixed(3)
          }
+
+            const rowSyncDate = row.updatedon_date || row.createdon_date;
+            if (rowSyncDate) {
+                const rowSyncTime = new Date(rowSyncDate).getTime();
+                if (!isNaN(rowSyncTime) && rowSyncTime > maxSyncTimestamp) {
+                    maxSyncTimestamp = rowSyncTime;
+                }
+            }
+
             userDetails.push({
                 id: row.id,
                 userName: row.user_name,
@@ -143,6 +169,11 @@ const getUserController = async (req: Request, res: Response) => {
                 userLastRideDateTime : row.last_user_ride_date_time
             });
         }
+
+        const requestSyncTime = updatedSinceIso ? new Date(updatedSinceIso).getTime() : 0;
+        const syncToken = new Date(Math.max(maxSyncTimestamp, requestSyncTime, Date.now())).toISOString();
+        res.setHeader('x-sync-token', syncToken);
+        res.setHeader('x-delta-mode', updatedSinceIso ? 'true' : 'false');
 
         if (result.rowCount > 0) {
             return RequestResponse.success(res, apiMessage.success, status.success, userDetails);

@@ -216,7 +216,9 @@ export const DB_CONFIGS = {
             (select max(to_ride_time)  from  admin.tbl_ride_booking where user_id = tbladmin.id ) as last_user_ride_date_time
             FROM admin.tbl_admin  tbladmin WHERE
               (tbladmin.id =  $1 OR $1 = 0) AND
-              (tbladmin.status_enum_id =  $2 OR $2 = 0) AND tbladmin.user_type_enum_id = 4 ;`;
+                            (tbladmin.status_enum_id =  $2 OR $2 = 0) AND
+                            (coalesce(tbladmin.updatedon_date, tbladmin.createdon_date) >= $3::timestamptz OR $3::timestamptz IS NULL) AND
+                            tbladmin.user_type_enum_id = 4 ;`;
         },
         getUserIdByEmailId: () => {
             return `select id from admin.tbl_admin where  UPPER(TRIM(emailid))=UPPER(TRIM($1))`;
@@ -819,7 +821,7 @@ export const DB_CONFIGS = {
                                 tld.lock_number,tld.latitude, tld.longitude, tpb.bike_booked_status,
                                 tld.device_light_status_enum_id  ,tld.device_light_instruction_enum_id ,tld.device_lock_and_unlock_status,
                                 tld.deveice_state_enum_id
-                                ,tld.device_last_request_time ,tld.lastupdateddateforbatterypercentage,
+                                ,tld.device_last_request_time ,tld.lastdevicerequesttime, tld.lastupdateddateforbatterypercentage,
                                 ride.id,usr.id,tld.beep_instruction_enum_id ,  tld.beep_status_enum_id,tld.instruction_id ,tld.power_on_off_status_enum_id
                 having CAST (coalesce(tld.battery,'0' )AS numeric)  <= 20`;
             },
@@ -885,7 +887,7 @@ export const DB_CONFIGS = {
                                 tld.lock_number,tld.latitude, tld.longitude, tpb.bike_booked_status,
                                 tld.device_light_status_enum_id  ,tld.device_light_instruction_enum_id ,tld.device_lock_and_unlock_status,
                                 tld.deveice_state_enum_id
-                                ,tld.device_last_request_time ,tld.lastupdateddateforbatterypercentage,
+                                ,tld.device_last_request_time ,tld.lastdevicerequesttime, tld.lastupdateddateforbatterypercentage,
                                 ride.id,usr.id,tld.beep_instruction_enum_id ,  tld.beep_status_enum_id,tld.instruction_id ,tld.power_on_off_status_enum_id
                             having  CAST(coalesce(tld.battery,'0' )AS numeric) > 20 and CAST (coalesce(tld.battery,'0' )AS numeric) <= 50
             `;
@@ -954,7 +956,7 @@ export const DB_CONFIGS = {
                                 tld.lock_number,tld.latitude, tld.longitude, tpb.bike_booked_status,
                                 tld.device_light_status_enum_id  ,tld.device_light_instruction_enum_id ,tld.device_lock_and_unlock_status,
                                 tld.deveice_state_enum_id
-                                ,tld.device_last_request_time ,tld.lastupdateddateforbatterypercentage,
+                                ,tld.device_last_request_time ,tld.lastdevicerequesttime, tld.lastupdateddateforbatterypercentage,
                                 ride.id,usr.id,tld.beep_instruction_enum_id ,  tld.beep_status_enum_id,tld.instruction_id ,tld.power_on_off_status_enum_id
                                  having  CAST(coalesce(tld.battery,'0' )AS numeric) > 50`;
             },
@@ -2040,16 +2042,23 @@ city.map_state_id = st.map_state_id
                     ) tblProdBike ON true
                     WHERE (
                         trim($1) = ''
-                        OR upper(trim(coalesce(tbllock.lock_number, ''))) = upper(trim($1))
-                        OR upper(trim(coalesce(tbllock.device_id, ''))) = upper(trim($1))
-                        OR upper(trim(coalesce(tbllock.imei_number, ''))) = upper(trim($1))
-                        OR upper(trim(coalesce(tblProdBike.bike_name, ''))) = upper(trim($1))
-                        OR cast(tbllock.id as text) = trim($1)
-                        OR cast(tblProdBike.id as text) = trim($1)
-                        OR upper(trim(coalesce(tbllock.lock_number, ''))) LIKE '%' || upper(trim($1)) || '%'
-                        OR upper(trim(coalesce(tbllock.device_id, ''))) LIKE '%' || upper(trim($1)) || '%'
-                        OR upper(trim(coalesce(tbllock.imei_number, ''))) LIKE '%' || upper(trim($1)) || '%'
-                        OR upper(trim(coalesce(tblProdBike.bike_name, ''))) LIKE '%' || upper(trim($1)) || '%'
+                        OR (
+                            upper(trim(coalesce(tbllock.lock_number, ''))) = upper(trim($1))
+                            OR upper(trim(coalesce(tbllock.device_id, ''))) = upper(trim($1))
+                            OR upper(trim(coalesce(tbllock.imei_number, ''))) = upper(trim($1))
+                            OR upper(trim(coalesce(tblProdBike.bike_name, ''))) = upper(trim($1))
+                            OR cast(tbllock.id as text) = trim($1)
+                            OR cast(tblProdBike.id as text) = trim($1)
+                            OR (
+                                coalesce($2::boolean, false) = false
+                                AND (
+                                    upper(trim(coalesce(tbllock.lock_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                    OR upper(trim(coalesce(tbllock.device_id, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                    OR upper(trim(coalesce(tbllock.imei_number, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                    OR upper(trim(coalesce(tblProdBike.bike_name, ''))) LIKE '%' || upper(trim($1)) || '%'
+                                )
+                            )
+                        )
                     )
                     AND nullif(trim(cast(tbllock.latitude as text)), '') IS NOT NULL
                     AND nullif(trim(cast(tbllock.longitude as text)), '') IS NOT NULL

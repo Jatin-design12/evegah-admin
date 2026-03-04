@@ -8,7 +8,8 @@ module.exports = {
       NODE_ENV: 'development'
     },
     env_production: {
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      CORS_ALLOWED_ORIGINS: 'https://admin.evegah.com,http://localhost:4200,http://127.0.0.1:4200,http://localhost:8100,http://127.0.0.1:8100,capacitor://localhost,ionic://localhost'
     }
   }],
 

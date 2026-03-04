@@ -870,7 +870,7 @@
         "tags": [
           "Comman-api"
         ],
-        "description": "delete s3 file ",
+        "description": "delete file (hostinger/local) ",
         "parameters": [
           {
             "name": "obj",

@@ -10,7 +10,7 @@ class GetUserServices {
     async getUserDetails(user: any) {
         let query: any = {
             text: DB_CONFIGS.customerQueries.getUser(),
-            values: [user.id, user.statusEnumId]
+            values: [user.id, user.statusEnumId, user.updatedSince || null]
         };
         
         return new Promise(async (resolve, reject) => {

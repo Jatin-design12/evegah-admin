@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+// AWS SDK no longer used for storage; keep only if SES/email is required
 const qr = require('qrcode');
 import jwt from 'jsonwebtoken';
 import config from '../Config/config';
@@ -25,29 +25,107 @@ import status from '../helper/status';
 import { error } from 'winston';
 const key = 'eb119edbbbcf6a111ab54ddd8c23354cccb3be6d9534857a7849b18229497efa'; //crypto.randomBytes(32).toString('hex');
 
-function gets3SignedUrls(filename: any) {
-    let fileUrl = null;
+function getStorageProvider(): 'hostinger' {
+    // storage is now exclusively hostinger/local; ignore AWS
+    return 'hostinger';
+}
 
-    if (filename == null || filename == '' || filename == 'undefined' || filename == 'null') {
-        return fileUrl;
+function encodePathKeepingSlash(pathValue: string) {
+    return String(pathValue)
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/');
+}
+
+function getHostingerAssetBaseUrl() {
+    const configuredBase = String(process.env.HOSTINGER_ASSET_BASE_URL || process.env.IMAGE_BASE_URL || '')
+        .trim()
+        .replace(/\/$/, '');
+
+    if (configuredBase) {
+        return configuredBase;
     }
 
-    const myBucket = config.aws.AWS_BUCKET;
-    const myKey = filename;
-    const signedUrlExpireSeconds = config.aws.SIGNED_URL_EXPIRE_IN_SECONDS;
-    const s3 = new AWS.S3({
-        accessKeyId: config.aws.AWS_ID,
-        signatureVersion: config.aws.SIGNATURE_VERSION,
-        region: config.aws.REGION,
-        secretAccessKey: config.aws.SECRET_ACCESS_KEY
-    });
+    return `${getLocalAssetBaseUrl()}/api/upload`;
+}
 
-    const file = s3.getSignedUrl('getObject', {
-        Bucket: myBucket,
-        Key: myKey,
-        Expires: signedUrlExpireSeconds
-    });
-    return file;
+function getHostingerAssetUrl(filename: any) {
+    if (!filename) {
+        return null;
+    }
+
+    const filenameText = String(filename).trim();
+    if (!filenameText) {
+        return null;
+    }
+
+    if (/^https?:\/\//i.test(filenameText)) {
+        return filenameText;
+    }
+
+    const hostingerBaseUrl = getHostingerAssetBaseUrl();
+    if (!hostingerBaseUrl) {
+        return null;
+    }
+
+    const normalizedPath = filenameText.replace(/^\/+/, '');
+    return `${hostingerBaseUrl}/${encodePathKeepingSlash(normalizedPath)}`;
+}
+
+function getLocalAssetBaseUrl() {
+    const explicitImageBase = String(process.env.IMAGE_BASE_URL || '').trim().replace(/\/$/, '');
+    if (explicitImageBase) {
+        return explicitImageBase;
+    }
+
+    const explicitServerBase = String(process.env.SERVER_BASE_URL || '').trim().replace(/\/$/, '');
+    if (explicitServerBase) {
+        return explicitServerBase;
+    }
+
+    const serverPort = String(config.server?.port || process.env.SERVER_PORT || '9002').trim();
+    const isDev = String(process.env.NODE_ENV || '').toLowerCase() === 'development';
+    const protocol = isDev ? 'http' : (String(process.env.SERVER_PROTOCOL || 'https').toLowerCase());
+    const host = isDev
+        ? (String(process.env.LOCAL_SERVER_HOST || 'localhost').trim())
+        : (String(config.server?.hostname || process.env.SERVER_HOSTNAME || 'admin.evegah.com').trim());
+
+    return `${protocol}://${host}${serverPort ? `:${serverPort}` : ''}`;
+}
+
+function getFallbackAssetUrl(filename: any) {
+    if (!filename) {
+        return null;
+    }
+
+    const hostingerUrl = getHostingerAssetUrl(filename);
+    if (hostingerUrl) {
+        return hostingerUrl;
+    }
+
+    const baseUrl = getLocalAssetBaseUrl();
+    const encodedFileName = encodePathKeepingSlash(String(filename));
+    return `${baseUrl}/api/assets/${encodedFileName}`;
+}
+
+// aws signing removed; no longer relevant
+function isAwsSigningConfigured() {
+    return false;
+}
+
+function gets3SignedUrls(filename: any) {
+    // storage now always delivered via hostinger/local backend URL
+    if (filename == null || filename === '' || filename === 'undefined' || filename === 'null') {
+        return null;
+    }
+
+    const filenameText = String(filename).trim();
+    if (/^https?:\/\//i.test(filenameText)) {
+        return filenameText;
+    }
+
+    // simply return fallback/local asset URL
+    return getFallbackAssetUrl(filenameText);
 }
 
 function getFileName(filename: string) {
@@ -69,33 +147,8 @@ function getOriginalFileName(fileName: string) {
 }
 
 function checkFileExist(filename: string) {
-    const myBucket = config.aws.AWS_BUCKET;
-    const myKey = filename;
-    const s3 = new AWS.S3({
-        accessKeyId: config.aws.AWS_ID,
-        signatureVersion: config.aws.SIGNATURE_VERSION,
-        region: config.aws.REGION,
-        secretAccessKey: config.aws.SECRET_ACCESS_KEY
-    });
-    const params = {
-        Bucket: myBucket,
-        Key: myKey
-    };
-    try {
-        return new Promise((resolve, reject) => {
-            s3.headObject(params, function (err: any, resp: any, body: any) {
-                if (err) 
-                {
-                    resolve(null);
-                } else 
-                {
-                    resolve(gets3SignedUrls(params.Key));
-                }
-            });
-        });
-    } catch (err) {
-        throw err;
-    }
+    // simply return fallback URL; hostinger assumes file exists if key provided
+    return Promise.resolve(getFallbackAssetUrl(filename));
 }
 
 function covertJsonArrayToDBarray(jsonArray: any) {

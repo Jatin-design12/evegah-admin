@@ -30,6 +30,24 @@ const allowedOrigins = String(process.env.CORS_ALLOWED_ORIGINS || 'https://admin
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0);
 
+const defaultAllowedOrigins = [
+    'https://admin.evegah.com',
+    'http://localhost:4200',
+    'http://127.0.0.1:4200',
+    'http://localhost:8100',
+    'http://127.0.0.1:8100',
+    'capacitor://localhost',
+    'ionic://localhost'
+];
+
+const effectiveAllowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...allowedOrigins]));
+
+const isDevAppOrigin = (origin: string): boolean => {
+    if (!origin) return false;
+    if (origin === 'capacitor://localhost' || origin === 'ionic://localhost') return true;
+    return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
+};
+
 router.set('view engine', 'ejs');
 
 let stringify = require('json-stringify-safe');
@@ -86,12 +104,15 @@ router.use(express.text());
 
 router.use((req, res, next) => {
     const requestOrigin = String(req.headers.origin || '');
-    if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
-        res.header('Access-Control-Allow-Origin', requestOrigin);
-    } else if (!requestOrigin) {
-        res.header('Access-Control-Allow-Origin', '*');
+    if (requestOrigin) {
+        if (effectiveAllowedOrigins.includes(requestOrigin) || isDevAppOrigin(requestOrigin)) {
+            res.header('Access-Control-Allow-Origin', requestOrigin);
+        } else {
+            logger.warn(`CORS request from non-whitelisted origin: ${requestOrigin}`);
+            res.header('Access-Control-Allow-Origin', requestOrigin);
+        }
     } else {
-        res.header('Access-Control-Allow-Origin', allowedOrigins[0] || 'https://admin.evegah.com');
+        res.header('Access-Control-Allow-Origin', '*');
     }
     res.header('Vary', 'Origin');
 

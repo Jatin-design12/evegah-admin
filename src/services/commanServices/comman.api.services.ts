@@ -9,29 +9,26 @@ import RequestResponse from '../../helper/responseClass';
 import { apiMessage } from '../../helper/api-message';
 import { gets3SignedUrls } from '../../helper/common-function';
 import {  exceptionHandler,AddExceptionIntoDB  } from '../../helper/responseHandler';
-const aws = require('aws-sdk');
+// AWS SDK removed – we use hostinger/local filesystem instead
+const fs = require('fs');
+const path = require('path');
 
-let s3 = new aws.S3({
-    credentials: {
-        accessKeyId: config.aws.AWS_ID,
-        secretAccessKey: config.aws.SECRET_ACCESS_KEY
-    }
-});
 export const FileDelete = async (req: Request, res: Response) => {
     try {
-        const params = {
-            Bucket: config.aws.AWS_BUCKET,
-            Key: req.body.file_name
-        };
-
-        s3.deleteObject(params, async (error: Error, data: any) => {
-            if (error) {
-                //   console.log(error);
-                return RequestResponse.success(res, 'file not deleted ', status.error, error);
-            } else {
+        // delete from local hostinger upload directory
+        const filename = String(req.body.file_name || '').trim();
+        if (filename) {
+            const uploadDirectory = path.resolve(process.cwd(), String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim());
+            const filePath = path.join(uploadDirectory, filename);
+            fs.unlink(filePath, (err: NodeJS.ErrnoException | null) => {
+                if (err && err.code !== 'ENOENT') {
+                    return RequestResponse.success(res, 'file not deleted ', status.error, err);
+                }
                 return RequestResponse.success(res, apiMessage.filerDelete, status.success, null);
-            }
-        });
+            });
+        } else {
+            return RequestResponse.validationError(res, apiMessage.invalidRequest, status.error, []);
+        }
     } catch (error: any) {
         AddExceptionIntoDB(req,error);
         return exceptionHandler(res, 1, error.message);
@@ -86,27 +83,31 @@ const uploadFileToS3 = async (file: any) => {
         let filename = file?.name.split('.');
         let filetype = filename[filename.length - 1].toLowerCase();
         let id = uuidv4();
-        const params = {
-            // this parma for store file in s3 bucket
-            Bucket: config.aws.AWS_BUCKET,
-            Key: `${id}.${filename[0]}.${filetype}`,
-            Body: file?.data
-        };
+        const uniqueFileName = `${id}.${filename[0]}.${filetype}`;
+        const storageProvider = String(process.env.STORAGE_PROVIDER || 'aws').trim().toLowerCase();
+        // will always use hostinger/local filesystem
+        if (['pdf','doc','docx','xlsx','xls','png','jpg','jpeg','mp4'].includes(filetype)) {
+            const uploadDirectory = path.resolve(process.cwd(), String(process.env.HOSTINGER_UPLOAD_DIR || config.folderpath || 'upload').trim());
 
-        if (filetype === 'pdf' || filetype === 'doc' || filetype === 'docx' ||  filetype ==='xlsx'
-       || filetype === 'xls' ||  filetype === 'png' || filetype === 'jpg' 
-        || filetype === 'jpeg' || filetype === 'mp4') {
-            s3.upload(params, async (error: Error, data: any) => {
-                if (error) {
-                    
-                    // throw error;
+            fs.mkdir(uploadDirectory, { recursive: true }, (mkdirError: Error) => {
+                if (mkdirError) {
+                    return reject(mkdirError);
                 }
-                resolve({
-                    unique_file_name: data.Key,
-                    file_name: original_file_name,
-                    getSingedUrl: gets3SignedUrls(data.key)
+
+                const localFilePath = path.join(uploadDirectory, uniqueFileName);
+                fs.writeFile(localFilePath, file?.data, (writeError: Error) => {
+                    if (writeError) {
+                        return reject(writeError);
+                    }
+
+                    resolve({
+                        unique_file_name: uniqueFileName,
+                        file_name: original_file_name,
+                        getSingedUrl: gets3SignedUrls(uniqueFileName)
+                    });
                 });
             });
+            return;
         } else {
             resolve(null);
         }

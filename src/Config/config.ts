@@ -91,19 +91,9 @@ let zaakPaymentConfigKeys;
 // check image issue
 const UPOLAD_FILE = process.env.FILEPATHS || 'upload/';
 
-const AWS_ID = process.env.AWS_ID;
-const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY ;
-const AWS_BUCKET = process.env.AWS_BUCKET ;
-const SIGNATURE_VERSION = process.env.SIGNATURE_VERSION;
-const REGION = process.env.REGION ;
-const AWS = {
-    AWS_ID: AWS_ID,
-    SECRET_ACCESS_KEY: SECRET_ACCESS_KEY,
-    AWS_BUCKET: AWS_BUCKET,
-    SIGNATURE_VERSION: SIGNATURE_VERSION,
-    REGION: REGION,
-    SIGNED_URL_EXPIRE_IN_SECONDS: 60 * 60 * 3 //10800 3 hours
-};
+// AWS configuration removed – no longer used by backend.  Remove these variables
+// from your environment if they are no longer needed.
+const AWS = {} as const; // placeholder export to avoid breaking existing imports
 
 //var memcached = new redis('localhost:11211', { retries: 5, retry: 30000, remove: false });
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';

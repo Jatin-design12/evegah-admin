@@ -1,4 +1,3 @@
-import { dateType } from 'aws-sdk/clients/iam';
 
 interface getEnumDetailsRes {
     enum_id: Number;

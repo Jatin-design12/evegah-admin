@@ -319,7 +319,7 @@ class BikeProduce {
     async getDeveiceLatLogAll(deviceData: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.deviceLatLogAll(),
-            values: [deviceData.searchRef || '']
+            values: [deviceData.searchRef || '', Boolean(deviceData.exactOnly)]
         };
 
         return new Promise(async (resolve, reject) => {

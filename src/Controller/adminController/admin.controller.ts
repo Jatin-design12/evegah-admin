@@ -28,7 +28,6 @@ import areaController from './area.Controller';
 import { getTokenDetail } from '../../helper/common-function';
 import { kClientName } from '../../constant/kritin-client-name';
 import { client } from '../../Config/db.connection';
-import { Message } from '@aws-sdk/client-ses';
 import geofence from '../../helper/geofence';  
 import { setBeepOnInstructionCommon,setBeepOffInstructionCommon ,checkGeoInOout,insertApiRequest, insertApiResponceData } from '../../helper/common-function';
 import utcdate from '../../helper/utcdate';
@@ -2819,13 +2818,16 @@ const getLatLog = async (req: Request, res: Response) => {
 
         let requestQuery: any = req.query;
         const searchRef: any = requestQuery.searchRef || requestQuery.deviceId || requestQuery.lockNumber || requestQuery.bikeName || requestQuery.vehicleNo || requestQuery.bikeId || '';
+        const exactOnly: boolean = String(requestQuery.exactOnly || '').toLowerCase() === '1' || String(requestQuery.exactOnly || '').toLowerCase() === 'true';
 
         let result: any;
         if (CommonMessage.IsValid(searchRef) == true) {
-            requestQuery.deviceId = String(searchRef);
-            result = await BikeProduceServices.getDeveiceLatLog(requestQuery);
+            result = await BikeProduceServices.getDeveiceLatLogAll({
+                searchRef: String(searchRef),
+                exactOnly: exactOnly
+            });
         } else {
-            result = await BikeProduceServices.getDeveiceLatLogAll({ searchRef: '' });
+            result = await BikeProduceServices.getDeveiceLatLogAll({ searchRef: '', exactOnly: false });
         }
 
         let bikeProduceDetails = [];

@@ -2,6 +2,7 @@
 
 export const apiMessage = {
     somethingWentWrong: 'something Went Wrong',
+    invalidRequest: 'Invalid request.',
     checkMobileNumberExist: `Mobile number does not exist.`,
     checkMobileNumber: 'Mobile number exist.',
     validMobileNumber: 'Enter valid Mobile Number',

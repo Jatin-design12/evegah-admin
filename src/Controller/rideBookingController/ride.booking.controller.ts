@@ -32,7 +32,6 @@ import { fromDateTodateValidations } from '../../helper/common-function';
 import axios from 'axios';
 import inwardController from '../../Controller/inwardController/inward.controller';
 import config from '../../Config/config';
-import { CostExplorer } from 'aws-sdk';
 let nodeSchedule = require('node-cron');
 
 const rideBookingController = async (req: Request, res: Response) => {

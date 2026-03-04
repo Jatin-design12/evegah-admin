@@ -18,23 +18,11 @@ import bcrypt from 'bcryptjs';
 
 
 let nodemailer = require('nodemailer');
-let aws = require('@aws-sdk/client-ses');
-var sesTransport = require('nodemailer-ses-transport');
+// email transporter is now a no‑op/json transport; AWS SES support removed
 import { getUTCdate } from '../../helper/datetime';
 let responsestatusCode = new ResponseStatusCode();
 
-const ses = new aws.SES({
-    region: 'us-east-2'
-});
-
-var transporter = nodemailer.createTransport(
-    sesTransport({
-        accessKeyId: config.aws.AWS_ID,
-        secretAccessKey: config.aws.SECRET_ACCESS_KEY,
-        region: config.aws.REGION,
-        SES: { ses, aws }
-    })
-);
+const transporter = nodemailer.createTransport({ jsonTransport: true });
 
 export async function GetEnumDetail(req: Request, res: Response) {
     try {
@@ -469,7 +457,7 @@ export const ResetpasswordEMailGeneration = async (req: Request, res: Response) 
                                                                     </li>
                                                                 </a>
                                                             </ul>
-                                                            <div class="copyright">Copyright © 2021 Kritin Digital Solutions All rights
+                                                            <div class="copyright">Copyright © 2026 Evegah Mobility Pvt Ltd All rights
                                                                 reserved.</div>
                                                         </td>
                                                     </tr>
