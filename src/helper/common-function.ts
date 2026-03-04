@@ -73,6 +73,13 @@ function getHostingerAssetUrl(filename: any) {
 }
 
 function getLocalAssetBaseUrl() {
+    const explicitPublicBase = String(process.env.PUBLIC_BASE_URL || config.prefix_filpath || '')
+        .trim()
+        .replace(/\/$/, '');
+    if (explicitPublicBase) {
+        return explicitPublicBase;
+    }
+
     const explicitImageBase = String(process.env.IMAGE_BASE_URL || '').trim().replace(/\/$/, '');
     if (explicitImageBase) {
         return explicitImageBase;
@@ -83,14 +90,13 @@ function getLocalAssetBaseUrl() {
         return explicitServerBase;
     }
 
-    const serverPort = String(config.server?.port || process.env.SERVER_PORT || '9002').trim();
-    const isDev = String(process.env.NODE_ENV || '').toLowerCase() === 'development';
-    const protocol = isDev ? 'http' : (String(process.env.SERVER_PROTOCOL || 'https').toLowerCase());
-    const host = isDev
-        ? (String(process.env.LOCAL_SERVER_HOST || 'localhost').trim())
-        : (String(config.server?.hostname || process.env.SERVER_HOSTNAME || 'admin.evegah.com').trim());
+    const protocol = String(process.env.SERVER_PROTOCOL || 'https').toLowerCase();
+    const host = String(config.server?.hostname || process.env.SERVER_HOSTNAME || 'admin.evegah.com').trim();
+    const rawPort = String(config.server?.port || process.env.SERVER_PORT || '').trim();
+    const defaultPort = protocol === 'https' ? '443' : '80';
+    const portPart = rawPort && rawPort !== defaultPort ? `:${rawPort}` : '';
 
-    return `${protocol}://${host}${serverPort ? `:${serverPort}` : ''}`;
+    return `${protocol}://${host}${portPart}`;
 }
 
 function getFallbackAssetUrl(filename: any) {
