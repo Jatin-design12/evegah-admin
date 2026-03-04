@@ -62,6 +62,19 @@ process.on('unhandledRejection', (reason: any, promise) => {
 
 router.use(process.env.API_PREFIX + '/assets', express.static(path.join(__dirname, 'upload')));
 router.use(process.env.API_PREFIX + '/upload', express.static('upload'));
+
+router.get((process.env.API_PREFIX || '/api') + '/', (req: Request, res: Response) => {
+    return res.status(200).json({ message: 'API is running', status: 'SUCCESS' });
+});
+
+router.get((process.env.API_PREFIX || '/api') + '/health', (req: Request, res: Response) => {
+    return res.status(200).json({ message: 'healthy', status: 'SUCCESS' });
+});
+
+router.get((process.env.API_PREFIX || '/api') + '/upload/', (req: Request, res: Response) => {
+    return res.status(200).json({ message: 'upload route is active', status: 'SUCCESS' });
+});
+
 router.use(compression());
 router.use(upload());
 //router.set('trust proxy',true)

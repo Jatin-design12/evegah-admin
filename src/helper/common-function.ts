@@ -94,7 +94,10 @@ function getLocalAssetBaseUrl() {
     const host = String(config.server?.hostname || process.env.SERVER_HOSTNAME || 'admin.evegah.com').trim();
     const rawPort = String(config.server?.port || process.env.SERVER_PORT || '').trim();
     const defaultPort = protocol === 'https' ? '443' : '80';
-    const portPart = rawPort && rawPort !== defaultPort ? `:${rawPort}` : '';
+    const isLocalHost = /^(localhost|127\.0\.0\.1)$/i.test(host);
+    const allowNonStandardHttpsPort = String(process.env.ALLOW_HTTPS_NONSTANDARD_PORT || '').toLowerCase() === 'true';
+    const shouldHideHttpsPort = protocol === 'https' && !isLocalHost && !allowNonStandardHttpsPort;
+    const portPart = rawPort && rawPort !== defaultPort && !shouldHideHttpsPort ? `:${rawPort}` : '';
 
     return `${protocol}://${host}${portPart}`;
 }

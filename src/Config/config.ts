@@ -52,7 +52,11 @@ if (PUBLIC_BASE_URL && PUBLIC_BASE_URL.trim() !== '') {
     PREFIX_FILE_PATH = PUBLIC_BASE_URL.trim().replace(/\/$/, '') + '/';
 } else {
     const defaultPortForProtocol = (SERVER_PROTOCOL === 'https' ? '443' : '80');
-    const shouldAppendPort = SERVER_PORT && String(SERVER_PORT) !== defaultPortForProtocol;
+    const normalizedHostName = normalizeHostName(SERVER_HOSTNAME);
+    const isLocalHost = /^(localhost|127\.0\.0\.1)$/i.test(normalizedHostName);
+    const allowNonStandardHttpsPort = String(process.env.ALLOW_HTTPS_NONSTANDARD_PORT || '').toLowerCase() === 'true';
+    const shouldHideHttpsPort = SERVER_PROTOCOL === 'https' && !isLocalHost && !allowNonStandardHttpsPort;
+    const shouldAppendPort = SERVER_PORT && String(SERVER_PORT) !== defaultPortForProtocol && !shouldHideHttpsPort;
     const portPart = shouldAppendPort ? `:${SERVER_PORT}` : '';
     PREFIX_FILE_PATH = `${SERVER_PROTOCOL}://${SERVER_HOSTNAME}${portPart}/`;
 }
