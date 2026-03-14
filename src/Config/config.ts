@@ -121,19 +121,50 @@ const defaultRazorpayMode = normalizedNodeEnv === 'production' && !IS_LOCAL_SERV
 const configuredRazorpayMode = String(process.env.RAZORPAY_MODE || defaultRazorpayMode).trim().toLowerCase();
 const useLiveRazorpay = configuredRazorpayMode === 'live' || configuredRazorpayMode === 'production';
 
-const razorpayFallback = useLiveRazorpay
-    ? {
-          key: 'rzp_live_QGWgrHCgrIGAwH',
-          secret: 'LXC7XbgEQ3JcTGHDDOQ3OQnq'
-      }
-    : {
-          key: 'rzp_test_SR2R6lsdpqNj32',
-          secret: 'G1kZuowlqscW7teGWyA2wmUV'
-      };
+const cleanEnv = (value: any): string =>
+    String(value ?? '')
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+
+const razorpayLive = {
+    key: cleanEnv(
+        process.env.RAZORPAY_LIVE_KEY_ID ||
+            process.env.RAZORPAY_KEY_ID_LIVE ||
+            process.env.RAZORPAY_KEY_ID ||
+            process.env.RAZORPAY_KEY
+    ),
+    secret: cleanEnv(
+        process.env.RAZORPAY_LIVE_KEY_SECRET ||
+            process.env.RAZORPAY_SECRET_KEY_LIVE ||
+            process.env.RAZORPAY_KEY_SECRET ||
+            process.env.RAZORPAY_SECRET_KEY
+    )
+};
+
+const razorpayTest = {
+    key: cleanEnv(
+        process.env.RAZORPAY_TEST_KEY_ID ||
+            process.env.RAZORPAY_KEY_ID_TEST ||
+            process.env.RAZORPAY_KEY_ID ||
+            process.env.RAZORPAY_KEY
+    ),
+    secret: cleanEnv(
+        process.env.RAZORPAY_TEST_KEY_SECRET ||
+            process.env.RAZORPAY_SECRET_KEY_TEST ||
+            process.env.RAZORPAY_KEY_SECRET ||
+            process.env.RAZORPAY_SECRET_KEY
+    )
+};
+
+const selectedRazorpay = useLiveRazorpay ? razorpayLive : razorpayTest;
+
+if (!selectedRazorpay.key || !selectedRazorpay.secret) {
+    logger.warn(`Razorpay ${useLiveRazorpay ? 'live' : 'test'} credentials are not fully configured. Set mode-specific env keys on server.`);
+}
 
 razorPay = {
-    key: String(process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY || razorpayFallback.key).trim(),
-    SECRET_KEY: String(process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET_KEY || razorpayFallback.secret).trim(),
+    key: selectedRazorpay.key,
+    SECRET_KEY: selectedRazorpay.secret,
     payoutApi: String(process.env.RAZORPAY_PAYOUT_API || 'https://api.razorpay.com/v1/payouts').trim(),
     mode: useLiveRazorpay ? 'live' : 'test'
 };
