@@ -16,38 +16,35 @@ router.get('/api/v1/getVehicleList', adminController.verifyTokenController, mast
 
 router.get('/api/v1/getVehicleTypeList', adminController.verifyTokenController, mastersController.getVehicleTypeListController);
 
-router.get('/getMapCity', adminController.verifyTokenController,mastersController.getMapCity);
-router.get('/getMapState',adminController.verifyTokenController, mastersController.getMapState);
-router.get('/getMapCountry',adminController.verifyTokenController, mastersController.getMapCountry);
+router.get('/getMapCity', adminController.verifyTokenController, mastersController.getMapCity);
+router.get('/getMapState', adminController.verifyTokenController, mastersController.getMapState);
+router.get('/getMapCountry', adminController.verifyTokenController, mastersController.getMapCountry);
 
-router.post('/insertVehicleModelDetail', adminController.verifyTokenController,mastersController.insertVehicleModelDetailsController);
+router.post('/insertVehicleModelDetail', adminController.verifyTokenController, mastersController.insertVehicleModelDetailsController);
 
-router.get('/getVehicleModelDetails',adminController.verifyTokenController, mastersController.getVehicleModelDetails);
-
+router.get('/getVehicleModelDetails', adminController.verifyTokenController, mastersController.getVehicleModelDetails);
 
 router.get('/getclientIPaddress', mastersController.getclientIPaddress);
 
-router.post('/insertApiExceptionData',adminController.verifyTokenController,mastersController.insertApiException);
+router.post('/insertApiExceptionData', adminController.verifyTokenController, mastersController.insertApiException);
 
-router.get('/getVehicleModelDetailsForTable',adminController.verifyTokenController,mastersController.getVehicleModelDetailsForTable);
+router.get('/getVehicleModelDetailsForTable', adminController.verifyTokenController, mastersController.getVehicleModelDetailsForTable);
 
-router.get('/getVehicleModelImagesBase64',adminController.verifyTokenController,mastersController.getImagesBase64Service);
-router.get('/getSectionFAQDetail',adminController.verifyTokenController,mastersController.getSectionFAQDetail);
+router.get('/getVehicleModelImagesBase64', adminController.verifyTokenController, mastersController.getImagesBase64Service);
+router.get('/getSectionFAQDetail', adminController.verifyTokenController, mastersController.getSectionFAQDetail);
 
+router.post('/AddSectionAndFAQDetail', mastersController.faqDetailSectionWise);
+router.get('/getSectionList', adminController.verifyTokenController, mastersController.getSectionList);
 
-router.post('/AddSectionAndFAQDetail',mastersController.faqDetailSectionWise);
-router.get('/getSectionList',adminController.verifyTokenController,mastersController.getSectionList);
+router.post('/unPublishFAQDetail', adminController.verifyTokenController, mastersController.unPublishFAQDetail);
+router.post('/publishFAQDetail', adminController.verifyTokenController, mastersController.publishFAQDetail);
 
-router.post('/unPublishFAQDetail',adminController.verifyTokenController,mastersController.unPublishFAQDetail);
-router.post('/publishFAQDetail',adminController.verifyTokenController,mastersController.publishFAQDetail);
+router.get('/getAllSectionFAQDetail', adminController.verifyTokenController, mastersController.getAllSectionFAQDetail);
 
-router.get('/getAllSectionFAQDetail',adminController.verifyTokenController,mastersController.getAllSectionFAQDetail);
+router.post('/addEditSectionName', mastersController.addeditSectionName);
 
-router.post('/addEditSectionName',mastersController.addeditSectionName);
+router.post('/addFAQSequence', mastersController.addFAQSequence);
 
-router.post('/addFAQSequence',mastersController.addFAQSequence);
-
-router.post('/addSectionSequense',mastersController.updateSequenseSection);
-
+router.post('/addSectionSequense', mastersController.updateSequenseSection);
 
 export default router;

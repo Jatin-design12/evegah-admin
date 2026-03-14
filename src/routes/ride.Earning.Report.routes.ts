@@ -9,6 +9,6 @@ router.post('/api/v1/getbikeWiseRideEarningReport', adminController.verifyTokenC
 
 router.post('/api/v1/getRideEarningDetailReport', adminController.verifyTokenController, rideEarningReportController.getRideEarningDetailReport);
 
-router.get('/api/v1/getDeviceLogInfoReport',  adminController.verifyTokenController, loginfoReportController.getDeviceLogInfoReport);
+router.get('/api/v1/getDeviceLogInfoReport', adminController.verifyTokenController, loginfoReportController.getDeviceLogInfoReport);
 
 export default router;

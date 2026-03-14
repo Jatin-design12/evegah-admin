@@ -1,51 +1,41 @@
 export const DB_CONFIGS = {
-    
-    
-    mastersQueries:
-    {
-        checkSectionQuestionExist:() => 
-        {
-        return `SELECT id FROM  masters.tbl_faq_detail WHERE  UPPER(TRIM(question))=UPPER(TRIM($1)) and id <> $2  and section_id = $3 `
+    mastersQueries: {
+        checkSectionQuestionExist: () => {
+            return `SELECT id FROM  masters.tbl_faq_detail WHERE  UPPER(TRIM(question))=UPPER(TRIM($1)) and id <> $2  and section_id = $3 `;
         },
 
-        checkSetionNameExist:() => 
-        {
-        return `SELECT id FROM  masters.tbl_setion_detail WHERE  UPPER(TRIM(name))=UPPER(TRIM($1)) and id <> $2;`
+        checkSetionNameExist: () => {
+            return `SELECT id FROM  masters.tbl_setion_detail WHERE  UPPER(TRIM(name))=UPPER(TRIM($1)) and id <> $2;`;
         },
 
-        addSectionName:() =>
-        {
+        addSectionName: () => {
             return `insert into masters.tbl_setion_detail (name,status_enum_id,createdon_date ,createdby_login_user_id,section_sequence) 
-                   values ($1,$2,$3,$4,$5) RETURNING id `
+                   values ($1,$2,$3,$4,$5) RETURNING id `;
         },
 
-        updateSectionName:() =>
-        {
+        updateSectionName: () => {
             return `update masters.tbl_setion_detail set
             name =$2,
             status_enum_id  = $3,
             updatedon_date = $4,
             updated_login_user_id = $5
-                  where id = $1`                 
+                  where id = $1`;
         },
-        addFAQDetail:() =>
-        {
+        addFAQDetail: () => {
             return `insert into masters.tbl_faq_detail (question,answer,faq_publish_status_enum_id,section_id,status_enum_id,createdon_date ,createdby_login_user_id,last_publish_date  ,
                 last_unpublish_date,last_published_user_id,last_unpublished_user_id,question_sequence) 
-                       values ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10, $11,$12) RETURNING id `
+                       values ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10, $11,$12) RETURNING id `;
         },
 
-        addFAQSequenceDetail:() =>
-        { return `select coalesce(max(question_sequence),0) as q_sequence from masters.tbl_faq_detail where section_id = $1`
-    },
+        addFAQSequenceDetail: () => {
+            return `select coalesce(max(question_sequence),0) as q_sequence from masters.tbl_faq_detail where section_id = $1`;
+        },
 
-    getSectionSequenceDetail:() =>
-    { return `select coalesce(max(section_sequence),0) as s_sequence from masters.tbl_setion_detail;`
-},
+        getSectionSequenceDetail: () => {
+            return `select coalesce(max(section_sequence),0) as s_sequence from masters.tbl_setion_detail;`;
+        },
 
-
-        editFAQDetail:() =>
-        {
+        editFAQDetail: () => {
             return `update masters.tbl_faq_detail set 
                  question  = $2,
                  answer  = $3,
@@ -58,27 +48,24 @@ export const DB_CONFIGS = {
                  last_unpublish_date  = $10 ,
                  last_published_user_id = $11,
                  last_unpublished_user_id = $12
-                       where id = $1`
+                       where id = $1`;
         },
-        updateSequenseFAQ:() =>
-        {
+        updateSequenseFAQ: () => {
             return `update masters.tbl_faq_detail set 
             question_sequence = $2,
                  updatedon_date = $3 ,
                  updated_login_user_id = $4                
-                       where id = $1`
+                       where id = $1`;
         },
 
-        updateSequenseSection:() =>
-        {
+        updateSequenseSection: () => {
             return `update  masters.tbl_setion_detail set 
             section_sequence = $2,
                  updatedon_date = $3 ,
                  updated_login_user_id = $4                
-                       where id = $1`
+                       where id = $1`;
         },
-        publishUnpublishFAQDetail:() =>
-        {
+        publishUnpublishFAQDetail: () => {
             return `update masters.tbl_faq_detail set                 
                  faq_publish_status_enum_id  = $2,                
                  updatedon_date = $3,
@@ -87,19 +74,17 @@ export const DB_CONFIGS = {
                  last_unpublish_date = $6,
                  last_published_user_id = $7,
                  last_unpublished_user_id = $8
-                where id = $1`
+                where id = $1`;
         },
-        getSectionList:() => 
-        {
-        return `SELECT id , name,section_sequence ,
+        getSectionList: () => {
+            return `SELECT id , name,section_sequence ,
                  createdon_date,updatedon_date 
         FROM  masters.tbl_setion_detail 
-                WHERE  (id = $1 OR $1= 0) order by section_sequence asc`
+                WHERE  (id = $1 OR $1= 0) order by section_sequence asc`;
         },
 
-        getFAQListQuery:() => 
-        {
-        return `SELECT 
+        getFAQListQuery: () => {
+            return `SELECT 
         fd.id,
          sd.section_sequence , fd.question_sequence ,
         fd.question,
@@ -115,15 +100,13 @@ export const DB_CONFIGS = {
                   inner join  masters.tbl_setion_detail sd on
                   sd.id = fd.section_id 
                  WHERE (fd.id = $1 OR $1=0) and (fd.section_id = $2 OR $2=0) and (fd.faq_publish_status_enum_id =$3 OR $3=0) 
-                 order by sd.section_sequence, fd.question_sequence asc;`
+                 order by sd.section_sequence, fd.question_sequence asc;`;
         },
 
-        getpublisheAndUnPublishDateQuery:() => 
-        {
-        return `SELECT id,last_publish_date,last_unpublish_date,faq_publish_status_enum_id ,last_published_user_id,last_unpublished_user_id  FROM masters.tbl_faq_detail  WHERE 
-         (id = $1);`
-        },
-
+        getpublisheAndUnPublishDateQuery: () => {
+            return `SELECT id,last_publish_date,last_unpublish_date,faq_publish_status_enum_id ,last_published_user_id,last_unpublished_user_id  FROM masters.tbl_faq_detail  WHERE 
+         (id = $1);`;
+        }
     },
     addressQueries: {
         getStates: (country_id: any) => {
@@ -135,29 +118,25 @@ export const DB_CONFIGS = {
         getCountry: () => {
             return `select * from masters.fn_show_country();fetch all from country`;
         }
-        
     },
-
 
     mapAddressQueries: {
         getMapStates: () => {
             return `select map_state_id,map_state_name from masters.tbl_map_state where( map_country_id =$1 Or $1 =0 ) order by map_country_id ,map_state_name asc`;
-        },  
+        },
         getmapCountry: () => {
             return `select map_country_id,map_country_name  from masters.tbl_map_country order by map_country_name asc;`;
-        } ,
+        },
         getMapCity: () => {
             return `select map_city_id , map_city_name  from masters.tbl_map_city where (map_state_id = $1 or $1 =0) order by map_state_id,map_city_name,user_city_name asc `;
-        },
-
-        
-},
+        }
+    },
 
     customerQueries: {
         addUserCheckCustomerMobileNumber: (mobileNumber: Number, statusEnum_id: Number) => {
             return `select * from admin.fn_check_customer_mobile_numbers('${mobileNumber}',${statusEnum_id}); fetch all from mobile_number`;
-                 },
-    
+        },
+
         addUser: (
             userId: Number,
             customerName: string,
@@ -357,11 +336,11 @@ export const DB_CONFIGS = {
         },
 
         addDepositAmount: () => {
-            return `UPDATE admin.tbl_admin SET deposit_amount = deposit_amount + $4, extra_charges=extra_charges - $3, last_deposit_amount_date = $1  WHERE id = $2`;            
+            return `UPDATE admin.tbl_admin SET deposit_amount = deposit_amount + $4, extra_charges=extra_charges - $3, last_deposit_amount_date = $1  WHERE id = $2`;
         },
 
         addDepositRechargeAmount: () => {
-            return `UPDATE admin.tbl_admin SET deposit_amount = deposit_amount + $4,  min_wallet_amount = min_wallet_amount + $3, last_deposit_amount_date = $1 ,last_recharge_amount_date  = $1  WHERE id = $2`;            
+            return `UPDATE admin.tbl_admin SET deposit_amount = deposit_amount + $4,  min_wallet_amount = min_wallet_amount + $3, last_deposit_amount_date = $1 ,last_recharge_amount_date  = $1  WHERE id = $2`;
         },
 
         getUserForDipositRechargeList: () => {
@@ -380,11 +359,9 @@ export const DB_CONFIGS = {
             from admin.tbl_admin ad  
             where  (UPPER(TRIM(ad.user_name)) LIKE '%' || UPPER(TRIM($1)) ||'%'  OR $1 ='')
                        and (ad.mobile LIKE '%' || $2 ||'%'  OR  $2='');`;
-        },
+        }
     },
     versionQueries: {
-
-        
         insertVersion: () => {
             return `
             insert into admin.tbl_app_version_history(display_version ,actual_version ,min_supportable_version,remark ,version_apply_date ,createdon_date,createdby_login_user_id) 
@@ -416,12 +393,11 @@ export const DB_CONFIGS = {
         getMiniSupportCurrentVersion: () => {
             return `select id ,display_version ,actual_version ,min_supportable_version,remark ,version_apply_date ,createdon_date,createdby_login_user_id, 
               updatedon_date ,action_remark ,updatedby_login_user_id  from  admin.tbl_app_version_history where min_supportable_version = true order by id desc limit 1`;
-        },
+        }
     },
     adminQueries: {
-
-        
-        getAdminByEmailId: () => `select id, user_name, emailid, password, mobile, status_enum_id, user_type_enum_id, admin_auth_token from admin.tbl_admin where LOWER(TRIM(emailid)) = LOWER(TRIM($1)) and status_enum_id = 1 limit 1`,
+        getAdminByEmailId: () =>
+            `select id, user_name, emailid, password, mobile, status_enum_id, user_type_enum_id, admin_auth_token from admin.tbl_admin where LOWER(TRIM(emailid)) = LOWER(TRIM($1)) and status_enum_id = 1 limit 1`,
         adminLogin: (emailId: string, password: string) => {
             return `select * from admin.fn_admin_loginn('${emailId}','${password}'); fetch all from admins`;
         },
@@ -442,7 +418,7 @@ export const DB_CONFIGS = {
         addAuthToken: () => {
             return `update  admin.tbl_admin  set admin_auth_token=$1 where id=$2 and status_enum_id=1`;
         },
-        
+
         adminDashboardQueries: {
             getDashboardCard: () => {
                 return ` 
@@ -512,7 +488,8 @@ export const DB_CONFIGS = {
                 return `select  id,lock_number as device_id, instruction_id from inventory.tbl_lock_detail WHERE lock_number =$1`;
             },
 
-            getDeviceLockAndLightInstructionDeviceId: () => { return `select 
+            getDeviceLockAndLightInstructionDeviceId: () => {
+                return `select 
              lockd.lock_number as device_id,
              lockd.id,
              lockd.device_lock_and_unlock_status ,
@@ -529,22 +506,23 @@ export const DB_CONFIGS = {
 			 (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =lockd.beep_status_enum_id)as beep_status
 			 
             from  inventory.tbl_lock_detail  lockd
-            WHERE lockd.lock_number =$1  `},
+            WHERE lockd.lock_number =$1  `;
+            },
             getDeviceLastTime: () => {
                 return `select enum_key::int from public.tbl_enum   WHERE enum_id= 25`;
             },
             setDeviceLastTimeAndConnectionQuery: () => {
-                return `update inventory.tbl_lock_detail set device_last_request_time = $1, deveice_state_enum_id = $2 where id = $3`
+                return `update inventory.tbl_lock_detail set device_last_request_time = $1, deveice_state_enum_id = $2 where id = $3`;
             },
-        
+
             setInstructionToLockUnlockDevice: () => {
-                return`UPDATE inventory.tbl_lock_detail
+                return `UPDATE inventory.tbl_lock_detail
                 SET   instruction_id=$1 ,
                 lastupdateddateforlockunlockinstruction =$3
                 WHERE lock_number = $2;`;
             },
             updateDeviceStateTime: () => {
-                return`update inventory.tbl_lock_detail set deveice_state_enum_id =24 
+                return `update inventory.tbl_lock_detail set deveice_state_enum_id =24 
                 where $1 >  (device_last_request_time  + (coalesce((select enum_key::integer from public.tbl_enum   WHERE enum_id= 49 limit 1),0) * interval '1 minute'))
                 and deveice_state_enum_id= 23`;
             },
@@ -572,7 +550,7 @@ export const DB_CONFIGS = {
                 WHERE id = $3;`;
             },
 
-           powerOnOffForthirdParty: () => {
+            powerOnOffForthirdParty: () => {
                 return `UPDATE inventory.tbl_lock_detail
                 SET  power_on_off_status_enum_id=$1,
                 lastupdateddateforpoweronoff =$2 , 
@@ -636,7 +614,7 @@ export const DB_CONFIGS = {
                 WHERE lock_number=$3;`;
             },
 
-            updateDeviceBetterPersentage:() => {
+            updateDeviceBetterPersentage: () => {
                 return `UPDATE inventory.tbl_lock_detail SET battery =$1 ,lastupdateddateforbatterypercentage=$2 WHERE lock_number=$3;`;
             },
 
@@ -645,7 +623,7 @@ export const DB_CONFIGS = {
                 SET   location=$1, updatedon_date=$2
                 WHERE lock_number=$3;`;
             },
-            
+
             updateLockDetailWithMEotherParamter: () => {
                 return `UPDATE inventory.tbl_lock_detail
                 SET                   
@@ -675,16 +653,14 @@ export const DB_CONFIGS = {
             },
             deviceRegistration3: () => {
                 return ` UPDATE inventory.tbl_lock_detail SET  name=$1, registration_number=$2, imei_number=$3, serial_number=$4, odometer=$5, run_time=$6, chassis_number=$7, date_of_manufacture=$8, date_of_service=$9  ,createdon_date=$10 ,device_lock_and_unlock_status=2 WHERE lock_number=$11`;
-                
             },
 
             deviceRegistrationByAdmin: () => {
-                return ` UPDATE inventory.tbl_lock_detail SET   registartion_status=$2 WHERE id=$1`;                
+                return ` UPDATE inventory.tbl_lock_detail SET   registartion_status=$2 WHERE id=$1`;
             },
 
             deviceRegistration4: () => {
                 return ` UPDATE inventory.tbl_lock_detail SET   registration_number=$1, serial_number=$2,chassis_number=$3, date_of_manufacture=$4  ,createdon_date=$5 ,device_lock_and_unlock_status=2 WHERE lock_number=$6`;
-                
             },
             deviceDelete: () => {
                 return `DELETE FROM inventory.tbl_lock_detail  WHERE name = $1`;
@@ -752,7 +728,7 @@ export const DB_CONFIGS = {
             checkLastReuestTimeForDevice: () => {
                 return `select device_last_request_time  from inventory.tbl_lock_detail  where lock_number = $1`;
             },
-           deviceInternalCallingTimeQ: () => {
+            deviceInternalCallingTimeQ: () => {
                 return `select enum_key::int from public.tbl_enum where enum_id = 95`;
             },
             getProduceBikeBatteryStatusLessThenTwenty: () => {
@@ -990,24 +966,22 @@ export const DB_CONFIGS = {
                     where (tblmwauh.add_amount_for = $1 or $1=0)
                     order by id desc; `;
             },
-                               
-        
+
             setDeviceLightOnOffInstructionQuery: () => {
                 return `UPDATE inventory.tbl_lock_detail SET device_light_instruction_enum_id=$1 ,lastupdateddateforlightonoffinstruction =$3 WHERE id=$2`;
-            }, 
+            },
 
             lightOnOffDeviecQuery: () => {
                 return `UPDATE inventory.tbl_lock_detail
                 SET  device_light_status_enum_id=$1, device_light_instruction_enum_id=$2,lastupdateddateforlightonoff =$4
                 WHERE id = $3;`;
-            },          
+            },
 
-            insertDeviceLightInstructionsQuery:()=>
-            {
+            insertDeviceLightInstructionsQuery: () => {
                 return `insert into  admin.tbl_add_device_light_instruction(lock_id,ride_booking_id,
                     instruction_device_light_instruction_enum_id,
                     status_enum_id,createdon_date,createdby_login_user_id)
-                    values($1,$2,$3,$4,$5,$6) RETURNING id;`
+                    values($1,$2,$3,$4,$5,$6) RETURNING id;`;
             },
             addDeviceLightInformationslogQuery: () => {
                 return `INSERT INTO admin.tbl_add_device_information_log(
@@ -1049,31 +1023,29 @@ export const DB_CONFIGS = {
             },
 
             updateAreaCityInLockDetail: () => {
-                return`update inventory.tbl_lock_detail set area_id=$1 ,map_city_id =$2 where id=$3`
+                return `update inventory.tbl_lock_detail set area_id=$1 ,map_city_id =$2 where id=$3`;
             },
 
-            addRidebookingBeepOnLatLogJsonQ:()=>
-            {
-               return  `update admin.tbl_ride_booking  
+            addRidebookingBeepOnLatLogJsonQ: () => {
+                return `update admin.tbl_ride_booking  
                         set beepon_latitude_longitude_json = beepon_latitude_longitude_json::jsonb || $1 
                         , area_id =$3,map_city_id =$4
-                        where id = $2`
+                        where id = $2`;
             },
-   
-            addRidebookingBeepOffLatLogJsonQ:()=>
-            {
-               return  `update admin.tbl_ride_booking  
+
+            addRidebookingBeepOffLatLogJsonQ: () => {
+                return `update admin.tbl_ride_booking  
                set beepoff_latitude_longitude_json = beepoff_latitude_longitude_json::jsonb || $1
-               where id = $2`
+               where id = $2`;
             },
             // getLockNumber: () => {
-            //     return `select id , user_id from admin.tbl_ride_booking 
+            //     return `select id , user_id from admin.tbl_ride_booking
             //      where vehicle_lock_id = $1
             //      and  bike_rideing_status= 16
             //     order by id desc limit 1 `;
             // },
 
-           addDeviceLockCountQuery: () => {
+            addDeviceLockCountQuery: () => {
                 return `update admin.tbl_ride_booking  set device_lock_count = device_lock_count+$1
                          where id = $2`;
             },
@@ -1091,45 +1063,39 @@ export const DB_CONFIGS = {
                 where id = $2`;
             },
 
-             getLockIdByLockNumber:()=>
-            {
-                return `select latitude,longitude,id ,device_light_instruction_enum_id,device_light_status_enum_id, beep_instruction_enum_id,beep_status_enum_id ,instruction_id from inventory.tbl_lock_detail WHERE lock_number = $1`
+            getLockIdByLockNumber: () => {
+                return `select latitude,longitude,id ,device_light_instruction_enum_id,device_light_status_enum_id, beep_instruction_enum_id,beep_status_enum_id ,instruction_id from inventory.tbl_lock_detail WHERE lock_number = $1`;
             },
 
-            getBikeStatusAndZone:()=>
-            {
-                return `select id,bike_booked_status,zone_id from inventory.tbl_product_bike where lock_id =$1 and status_enum_id ='1' limit 1`
+            getBikeStatusAndZone: () => {
+                return `select id,bike_booked_status,zone_id from inventory.tbl_product_bike where lock_id =$1 and status_enum_id ='1' limit 1`;
             },
 
-            
-            getLockStatus:()=>
-            {
-                return `select id , name from masters.tbl_device_lock_status`
-            },   
-            
-            
+            getLockStatus: () => {
+                return `select id , name from masters.tbl_device_lock_status`;
+            },
+
             setDeviceBeepOnOffInstructionQuery: () => {
                 return `UPDATE inventory.tbl_lock_detail SET beep_instruction_enum_id=$1 ,lastupdateddateforbeeponoofinstruction=$3 WHERE id=$2`;
-            }, 
+            },
 
             setBikeGeoInOutQuery: () => {
                 return `UPDATE inventory.tbl_product_bike SET geofence_inout_enum_id=$1 WHERE id=$2`;
-            }, 
+            },
 
-            insertBeepInstructionsQuery:()=>
-            {
+            insertBeepInstructionsQuery: () => {
                 return `insert into  admin.tbl_add_device_beep_instruction(lock_id,ride_booking_id,
                     beep_instruction_enum_id,
                     status_enum_id,createdon_date,createdby_login_user_id,outside_geo_fence_latitude ,outside_geo_fence_longitude,
                     map_city_id ,area_id)
-                    values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id;`
+                    values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id;`;
             },
 
             beepOnOffDeviecQuery: () => {
                 return `UPDATE inventory.tbl_lock_detail
                 SET  beep_status_enum_id=$1, beep_instruction_enum_id=$2,lastupdateddateforbeeponoff=$4
                 WHERE id = $3;`;
-            },          
+            },
 
             addBeepOffCountQuery: () => {
                 return `update admin.tbl_ride_booking  set beep_off_count = beep_off_count + $1
@@ -1139,7 +1105,7 @@ export const DB_CONFIGS = {
             addBeepOnCountQuery: () => {
                 return `update admin.tbl_ride_booking  set beep_on_count = beep_on_count + $1
                 where id = $2`;
-            },
+            }
         }
     },
 
@@ -1198,9 +1164,8 @@ export const DB_CONFIGS = {
             return `select * from masters.fn_add_update_vehicle_model($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`;
         },
 
-        insertVehicleModelQuery:() => 
-        {
-        return `insert into  masters.tbl_vehicle_model
+        insertVehicleModelQuery: () => {
+            return `insert into  masters.tbl_vehicle_model
         (
 	     model_name,
 	     brand_name ,       	
@@ -1229,12 +1194,11 @@ export const DB_CONFIGS = {
         (
             $1,$2,$3,$4,$5, $6, $7, $8,$9,$10,$11,$12,$13,$14,$15,'check',$16
         )
-            RETURNING id;`
+            RETURNING id;`;
         },
 
-        updateVehicleModelQuery:() => 
-        {
-        return `update  masters.tbl_vehicle_model set 
+        updateVehicleModelQuery: () => {
+            return `update  masters.tbl_vehicle_model set 
         
 	     model_name =$2,
 	     brand_name =$3,
@@ -1259,11 +1223,10 @@ export const DB_CONFIGS = {
 	    updated_login_user_id =$15,
     	updatedon_date =$16 ,
         max_range_100_battery_in_km =$17
-        where id = $1`
+        where id = $1`;
         },
 
-        getVehicleModel:() =>
-        {
+        getVehicleModel: () => {
             return `select  vm.id , vm.model_name,
             vm.brand_name ,
             vm.company_name,       
@@ -1295,9 +1258,8 @@ export const DB_CONFIGS = {
            where (id = $1 Or $1 =0) and (vm.status_enum_id =$2 OR $2 =0) order by id desc `;
         },
 
-        checkExistVehicleModelQuery:() => 
-        {
-        return `SELECT id FROM  masters.tbl_vehicle_model WHERE model_name =$1 and  id <> $2 limit 1`
+        checkExistVehicleModelQuery: () => {
+            return `SELECT id FROM  masters.tbl_vehicle_model WHERE model_name =$1 and  id <> $2 limit 1`;
         },
 
         getVehicleList: () => {
@@ -1307,7 +1269,7 @@ export const DB_CONFIGS = {
             (select tblstatus.name from masters.tbl_vehicle_type tblstatus where tblstatus.id = tblvehmod.vehicle_type) as vehicle_type_name
             FROM masters.tbl_vehicle_model tblvehmod
            WHERE tblvehmod.status_enum_id = 1`;
-        },   
+        },
         addVehicleImage: () => {
             return `INSERT INTO masters.tbl_vehicle_model_image(
                  vehicle_id, image_name, image_unique_name, status_enum_id, createdon_date, createdby_login_user_id,image_serial_number,image_for)
@@ -1352,7 +1314,6 @@ export const DB_CONFIGS = {
 
     inwardQueries: {
         bikeInward: {
-            
             updateBikeAllocatedToProduction: () => {
                 return `UPDATE inventory.tbl_uid 
                 SET bike_status_enum_id =5  where  id=$1`;
@@ -1384,8 +1345,8 @@ export const DB_CONFIGS = {
                 return `UPDATE inventory.tbl_uid
                 SET bike_zone_allotment_allotment_id=5
                   WHERE   id = $1;`;
-            },           
-          
+            },
+
             checkUIdNumber: () => {
                 return `SELECT  id  FROM inventory.tbl_uid WHERE  UPPER(TRIM(model_uid))=UPPER(TRIM($1)) AND COALESCE($1,'')!='' AND  id <> $2`;
             },
@@ -1438,22 +1399,18 @@ export const DB_CONFIGS = {
                 and( ud.bike_produce_allotment_id=$2 or $2 =0) and (ud.bike_zone_allotment_allotment_id= $3 or $3=0)
              `;
             },
-         
+
             activeInactiveUidNumber: () => {
                 return `UPDATE inventory.tbl_uid SET  status_enum_id = $1, updatedon_date = $2 WHERE  id =  $3;`;
             },
 
-            activeDeactiveBike:()=>
-            {
+            activeDeactiveBike: () => {
                 return `UPDATE inventory.tbl_product_bike SET  status_enum_id = $1 WHERE  id =  $2`;
             },
-
 
             updateBikeLockAllotmentStatus: () => {
                 return `UPDATE  inventory.tbl_lock_detail SET allotment_status_id=$2 WHERE id=$1`;
             },
-
-           
 
             updateBikeAllocatedToInward: () => {
                 return `UPDATE inventory.tbl_uid 
@@ -1461,30 +1418,29 @@ export const DB_CONFIGS = {
                 status_enum_id = $3 where id=$1;`;
             },
 
-           updateBikeUIdStatusFromBikeProduce: () => {
+            updateBikeUIdStatusFromBikeProduce: () => {
                 return `UPDATE inventory.tbl_uid
                 SET  bike_produce_allotment_id=$2
                   WHERE id = $1;`;
-            },
-
+            }
         },
         lockInward: {
             checkLockNumber: () => {
                 return `select id ,registartion_status from inventory.tbl_lock_detail WHERE  lock_number=$1`;
-            },           
-                  
+            },
+
             IMEIAndLockNumberExit: () => {
                 return `select id from inventory.tbl_lock_detail WHERE  imei_number=$1   AND  lock_number=$2`;
             },
 
-            //lock_number_id=$1, lock_number_imei_id=$2,         
+            //lock_number_id=$1, lock_number_imei_id=$2,
             insertLockDetails: () => {
                 return `INSERT INTO inventory.tbl_lock_detail(
                     lock_number, status_enum_id, remarks, createdby_login_user_id,
                      createdby_user_type_enum_id,createdon_date,instruction_id,device_light_status_enum_id, device_light_instruction_enum_id,device_lock_and_unlock_status,beep_instruction_enum_id,
                      beep_status_enum_id,last_distance_in_meters,total_distance_in_meters,inward_date,imei_number,registartion_status)
                     VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,false) RETURNING id;`;
-            },           
+            },
             updateLockDetails: () => {
                 return `update inventory.tbl_lock_detail set
                         lock_number = $1 , 
@@ -1496,8 +1452,8 @@ export const DB_CONFIGS = {
                         inward_date = $8 ,
                         imei_number = $9 
                         where id = $7`;
-             },
-                       
+            },
+
             getLockInward: () => {
                 return `SELECT tbllock.id, 
                 
@@ -1535,19 +1491,19 @@ export const DB_CONFIGS = {
             },
             getLockList: () => {
                 return `select  id ,lock_number from  inventory.tbl_lock_detail where status_enum_id=1 and registartion_status=true and allotment_status_id=6 `;
-            },            
+            },
             activeInactiveLockNumber: () => {
                 return `update  inventory.tbl_lock_detail set  status_enum_id = $1 , updatedon_date= $2 where id = $3`;
-            },           
+            },
             LockDetailsFromDevice: () => {
                 return `insert into inventory.tbl_lock_detail_from_device(lock_details)
                 values($1)`;
-            },           
+            },
             deleteLockDetails: () => {
                 return `DELETE FROM inventory.tbl_lock_detail WHERE id = $1`;
             },
-                        
-        getLockDetails: () => {
+
+            getLockDetails: () => {
                 return `SELECT id, lock_number, status_enum_id, remarks, action_remarks, createdon_date, createdby_login_user_id, createdby_user_type_enum_id, updated_login_user_id, updatedon_date, updatedby_user_type_enum_id, name, device_id, registration_number, location, latitude, longitude, altitude, speed, battery, internal_batt_v, external_batt_v,
                 device_lock_and_unlock_status,
                 (select dls.name from  masters.tbl_device_lock_status dls where  dls.id =device_lock_and_unlock_status ) as device_lock_and_unlock_status_name,
@@ -1573,7 +1529,7 @@ export const DB_CONFIGS = {
             checkdeviceidExit: () => {
                 return `select id,lock_number ,device_last_request_time from inventory.tbl_lock_detail WHERE (TRIM(device_id))= (TRIM($1)) `;
             },
-            insertDeviceDetailForUserAPIQuery: () => { 
+            insertDeviceDetailForUserAPIQuery: () => {
                 return `insert into inventory.tbl_lock_detail(
                     name , 
                     device_id,
@@ -1622,42 +1578,38 @@ export const DB_CONFIGS = {
                   )
                   values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44)
                    RETURNING id;`;
-                },
+            },
 
-                checkDeviceStateExit: () => {
-                    return `select id from masters.tbl_device_state WHERE  UPPER(TRIM(name))= UPPER(TRIM($1))`;
-                },
-            insertDeviceState:()=>
-            {
+            checkDeviceStateExit: () => {
+                return `select id from masters.tbl_device_state WHERE  UPPER(TRIM(name))= UPPER(TRIM($1))`;
+            },
+            insertDeviceState: () => {
                 return `insert into masters.tbl_device_state(name, status_enum_id ,createdon_date)
-                      values($1,$2,$3)   RETURNING id;` 
+                      values($1,$2,$3)   RETURNING id;`;
             },
 
             checkLockNumberExit: () => {
                 return `select id from inventory.tbl_lock_detail WHERE  lock_number=$1   AND  id <> $2`;
             },
-        
+
             checimeiNumberExit: () => {
                 return `select id from inventory.tbl_lock_detail WHERE  imei_number=$1   AND  id <> $2`;
             },
 
-
             checkLockIdExit: () => {
                 return `select lock_number,registartion_status from inventory.tbl_lock_detail WHERE   id = $1`;
             },
-                    
 
             checkLockIdExitForDelete: () => {
                 return `select id,registartion_status from inventory.tbl_lock_detail WHERE   lock_number = $1`;
             },
-                 
+
             insertPostBodyDataQuery: () => {
                 return `INSERT INTO masters.tbl_postbody(
                         data,createdon_date)
                     VALUES ($1, $2) RETURNING id; `;
             },
 
-            
             insertGetBodyDataQuery: () => {
                 return `INSERT INTO masters.tbl_getbody(
                     data,createdon_date)
@@ -1675,7 +1627,6 @@ export const DB_CONFIGS = {
                     responce_data,Request_from)
                     VALUES ($1,$2,$3) RETURNING id; `;
             },
-
 
             insertApiExceptionDataQuery: () => {
                 return `INSERT INTO  admin.tbl_api_exception(
@@ -1696,7 +1647,6 @@ export const DB_CONFIGS = {
                     custom_error)
                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id; `;
             },
-
 
             insertApiRequestDataQuery: () => {
                 return `INSERT INTO   admin.tbl_api_request(
@@ -1722,8 +1672,7 @@ export const DB_CONFIGS = {
                     exception_name =$5,
                     exception_message =$6
                     where id = $1 `;
-            },
-          
+            }
         }
     },
 
@@ -1740,8 +1689,8 @@ export const DB_CONFIGS = {
             WHERE id=$11`;
         },
 
-        updateQRcodeForBikeProduce:() =>{
-            return  `UPDATE inventory.tbl_product_bike
+        updateQRcodeForBikeProduce: () => {
+            return `UPDATE inventory.tbl_product_bike
                       SET qr_number = $2 ,
                       encrypt_qr_data=$3 ,
                       generated_qr=$4,
@@ -1829,15 +1778,14 @@ city.map_state_id = st.map_state_id
             where encrypt_qr_data=$1 and tblProdBike.status_enum_id=1 `;
         },
 
-        getBikeId:() =>
-        {
+        getBikeId: () => {
             return `select tblProdBike.id ,tblProdBike.encrypt_qr_data ,tblProdBike.model_id ,
             tblProdBike.uid_id,
             tblProdBike.lock_id
 			  FROM  inventory.tbl_lock_detail  ld             
                inner join  inventory.tbl_product_bike tblProdBike on   
 		      ld.id = tblProdBike.lock_id
-            where  (ld.lock_number =$1 OR tblProdBike.qr_number = $1) `
+            where  (ld.lock_number =$1 OR tblProdBike.qr_number = $1) `;
         },
         checkSameCombinationBikeNotProduce: () => {
             return `select id from  inventory.tbl_product_bike tblProdBike where    tblProdBike.uid_id=$1 and   tblProdBike.lock_id = $2  and tblProdBike.id<>$3`;
@@ -1853,7 +1801,7 @@ city.map_state_id = st.map_state_id
         checkUIdNumberWithBike: () => {
             return `select id from  inventory.tbl_product_bike tblProdBike where    tblProdBike.uid_id=$1 and tblProdBike.id<>$2 and tblProdBike.status_enum_id ='1'`;
         },
-       // UPPER(TRIM(name))= UPPER(TRIM($2)) and city_id = $3 and id <> $1 limit 1
+        // UPPER(TRIM(name))= UPPER(TRIM($2)) and city_id = $3 and id <> $1 limit 1
         checkNameBikeExitOrNot: () => {
             return `select id  from  inventory.tbl_product_bike tblProdBike where  UPPER(TRIM(tblProdBike.bike_name)) =UPPER(TRIM($1)) and tblProdBike.id <> $2 limit 1`;
         },
@@ -1988,7 +1936,7 @@ city.map_state_id = st.map_state_id
        --and  (tblProdBike.zone_id = $4 OR $4 =0) 
       --order by countrys.map_country_name ,states.map_state_name,cities.map_city_name  asc;`;
         },
-        
+
         deviceLatLog: () => {
             return `SELECT 
                         tbllock.id as lock_id,
@@ -2224,7 +2172,6 @@ city.map_state_id = st.map_state_id
                   `;
         },
 
-
         getUndermaintenanceBikeWithMapCitySearch: () => {
             return ` SELECT  tblProdBike.id,
             tblProdBike.bike_name,
@@ -2278,7 +2225,7 @@ city.map_state_id = st.map_state_id
                    ( UPPER(TRIM(states.map_state_name)) =  UPPER(TRIM($2)) OR $2 ='' ) 
                   and (   UPPER(TRIM(cities.map_city_name)) = UPPER(TRIM($3)) OR $3='' OR   UPPER(TRIM(cities.user_city_name)) = UPPER(TRIM($3))) 
                   and  (tbllock.id = $4 OR $4 =0) `;
-        } ,
+        },
 
         getUndermaintenanceBike: () => {
             return ` SELECT  tblProdBike.id,
@@ -2317,9 +2264,8 @@ city.map_state_id = st.map_state_id
                                  
                    where tblProdBike.bike_booked_Status = 35 and tblProdBike.status_enum_id =1
                    and (tblProdBike.zone_id = $1 OR $1 =0)`;
-        } ,
+        },
 
-        
         getOutSideGeoFanceBikeListQ: () => {
             return ` 	 SELECT  tblProdBike.id,          
             coalesce(tbllock.device_last_request_time, tbllock.lastdevicerequesttime) as device_last_request_time,
@@ -2462,8 +2408,7 @@ city.map_state_id = st.map_state_id
              ( UPPER(TRIM(states.map_state_name)) =  UPPER(TRIM($2)) OR $2 ='' ) 
             and (   UPPER(TRIM(cities.map_city_name)) = UPPER(TRIM($3)) OR $3='' OR   UPPER(TRIM(cities.user_city_name)) = UPPER(TRIM($3))) 
             --and  (tblProdBike.zone_id = $4 OR $4 =0)                  `;
-        },
-       
+        }
     },
     allotment: {
         getZoneWiseDetails: () => {
@@ -2614,8 +2559,8 @@ city.map_state_id = st.map_state_id
            and (lockd.device_lock_and_unlock_status = $2 OR $2=0)
            and  (lockd.device_light_status_enum_id = $3 OR $3=0) 
            and  (lockd.beep_status_enum_id = $4 OR $4=0)            
-           order by lockd.id desc`
-    },
+           order by lockd.id desc`;
+        }
     },
     payment: {
         insertPaymentTransaction: () => {
@@ -2638,23 +2583,22 @@ city.map_state_id = st.map_state_id
             return `INSERT INTO admin.tbl_withdraw_transaction_details(
                  user_id, account_number, amount, currency, mode, purpose, fund_account, account_type,contact, queue_if_low_balance, reference_id, narration, notes, created_at, createdon_date)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;`;
-        } ,
+        },
 
         getPaymentTransactionId: () => {
             return `select id, payment_id ,online_payment_status_enum_id , order_id from   admin.tbl_payment_transaction_details where order_id = $1 OR  receipt = $2`;
-        } ,
+        },
 
         getPaymentTransactionIdAddPayment: () => {
             return `select id, payment_id ,online_payment_status_enum_id , order_id from   admin.tbl_payment_transaction_details where order_id = $1 `;
-        } ,
+        },
         getPaymentTransactionForUpdateValueId: () => {
             return `select id,user_id,amount, status, order_id, email, contact, createdon_date,
                 online_payment_status_enum_id,receipt,createdby_login_user_id , payment_order_no
-                from  admin.tbl_payment_transaction_details where online_payment_status_enum_id =33 AND  createdon_date::date > '2024-07-31'::date;`;  //order by id asc limit 10 ,2068)// createdon_date::date > '2024-07-26'::dat  //and user_id in (301,305,3578,3742 ,2068)//  33 unsetteled add one more condition for create on date;
-        } ,
+                from  admin.tbl_payment_transaction_details where online_payment_status_enum_id =33 AND  createdon_date::date > '2024-07-31'::date;`; //order by id asc limit 10 ,2068)// createdon_date::date > '2024-07-26'::dat  //and user_id in (301,305,3578,3742 ,2068)//  33 unsetteled add one more condition for create on date;
+        },
 
         UPaymentTransactionFromVerifyController: () => {
-
             return `update admin.tbl_payment_transaction_details set 
                 user_id = $2 , payment_id = $3, entity = $4, remarks = $5, currency= $6, status = $7, invoice_id = $9, international = $10, method= $11, amount_refunded= $12,
                 refund_status= $13, captured = $14, description= $15, card_id = $16, bank= $17, wallet= $18, vpa = $19, email= $20, contact= $21, notes=$22, 
@@ -2664,12 +2608,11 @@ city.map_state_id = st.map_state_id
         },
 
         UPaymentTransactionFromVerifyFromOrderFailedController: () => {
-
             return `update admin.tbl_payment_transaction_details set 
                         online_payment_status_enum_id= $3 ,updatedon_date = $4, remarks = $2 ,
                         razorpay_response_from_scheduler = $5
                 where id = $1`;
-        },
+        }
         // webhooksResponseForPaymentTransaction: () => {
         //     return `INSERT INTO admin.tbl_webhooks_payment_transaction_details(
         //          webhooks_response, createdon_date)
@@ -2678,48 +2621,41 @@ city.map_state_id = st.map_state_id
     },
     rideBooking: {
         insertRideBooking: () => {
-
             return `INSERT INTO admin.tbl_ride_booking(
                 user_id, vehicle_model_id, vehicle_uid_id, vehicle_lock_id, ride_booking_min,from_ride_time, to_ride_time, ride_payment_status, hiring_charges, pervious_charges, createdon_date, status_enum_id,payment_id,ride_start_latitude,ride_start_longitude,
                 bike_id,minimum_hiring_time,minimum_rent_rate,fare_plan_id,ride_start_address, ride_start_external_battery_voltage ,ride_start_internal_battery_voltage ,ride_start_zone_id,ride_booking_no,beep_on_count,beep_off_count,area_id,map_city_id,distance_in_meters, 
                 ride_start_ext_battery_percentage,ride_rating)
                VALUES ($1, $2, $3, $4, $5, $6, $7 , $8, $9, $10, $11, $12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31) RETURNING id;`;
 
-        //     fare_plan_id return `INSERT INTO admin.tbl_ride_booking(
-        //          user_id, vehicle_model_id, vehicle_uid_id, vehicle_lock_id, ride_booking_min,from_ride_time, to_ride_time, ride_payment_status, hiring_charges, pervious_charges, createdon_date, status_enum_id,payment_id,ride_start_latitude,ride_start_longitude)
-        //         VALUES ($1, $2, $3, $4, $5, $6, $7 , $8, $9, $10, $11, $12,$13,$14,$15) RETURNING id;`;
-         },
+            //     fare_plan_id return `INSERT INTO admin.tbl_ride_booking(
+            //          user_id, vehicle_model_id, vehicle_uid_id, vehicle_lock_id, ride_booking_min,from_ride_time, to_ride_time, ride_payment_status, hiring_charges, pervious_charges, createdon_date, status_enum_id,payment_id,ride_start_latitude,ride_start_longitude)
+            //         VALUES ($1, $2, $3, $4, $5, $6, $7 , $8, $9, $10, $11, $12,$13,$14,$15) RETURNING id;`;
+        },
 
-       addRidebookingRating:()=>
-         {
-            return  `update admin.tbl_ride_booking  
+        addRidebookingRating: () => {
+            return `update admin.tbl_ride_booking  
                      set ride_rating = $1,
                          ride_comments = $2,
                          comments_reply_status_enum_id = $3
-                     where id = $4`
-         },
+                     where id = $4`;
+        },
 
-         addRidebookingCommentsReply:()=>
-         {
-            return  `update admin.tbl_ride_booking  
+        addRidebookingCommentsReply: () => {
+            return `update admin.tbl_ride_booking  
                      set ride_Comments_reply = $1,
                      comments_reply_status_enum_id = $2,
                      comments_reply_date = $4
-                     where id = $3`
-         },
+                     where id = $3`;
+        },
 
-
-         addRidebookingLatLogJson:()=>
-         {
-            return  `update admin.tbl_ride_booking  
+        addRidebookingLatLogJson: () => {
+            return `update admin.tbl_ride_booking  
                      set latitude_longitude_json = latitude_longitude_json::jsonb || $1 ,current_latitude = $3 ,current_longitude = $4
                      ,distance_in_meters =coalesce(distance_in_meters,0) + $5
-                     where id = $2`
-         },
+                     where id = $2`;
+        },
 
-         
-        getRideBookingDetailForCommentsReply: () => 
-        {   
+        getRideBookingDetailForCommentsReply: () => {
             return `select 
     rb.id,
 	rb.user_id,
@@ -2794,10 +2730,10 @@ rb.ride_end_zone_id,
 	and (rb.comments_reply_status_enum_id = $4 OR $4=0)    
   and (UPPER(TRIM(ad.user_name)) LIKE '%' || UPPER(TRIM($5)) || '%' OR $5='')
   and (ad.mobile = $6 or $6='')
-  and rb.bike_rideing_status = '15'`
+  and rb.bike_rideing_status = '15'`;
         },
 
-         getUserTypeEnumId: () => {
+        getUserTypeEnumId: () => {
             return `select user_type_enum_id  from  admin.tbl_admin  WHERE id = $1 limit 1`;
         },
         addWalletAmount: () => {
@@ -2821,7 +2757,7 @@ rb.ride_end_zone_id,
         UpdateExtraCharges: () => {
             return `UPDATE admin.tbl_admin SET extra_charges = $1,  updatedon_date = $3 , user_driving_status=19 WHERE id = $2 `;
         },
-        
+
         updateActualTimeTake: () => {
             return `UPDATE admin.tbl_ride_booking  SET actual_ride_time = $1 ,actual_ride_min = $4, extra_ride_charges=$5, total_ride_amount=$6, updatedon_date =$3, ride_end_latitude =$7,
                ride_end_longitude=$8, bike_rideing_status=15 ,
@@ -2896,7 +2832,7 @@ rb.ride_end_zone_id,
         getLastMinAmount: () => {
             return `select enum_key::int from public.tbl_enum   WHERE enum_id= 25`;
         },
-        
+
         getLastMinRechargeAmount: () => {
             return `select enum_key::int from public.tbl_enum   WHERE enum_id= 107`;
         },
@@ -2907,13 +2843,12 @@ rb.ride_end_zone_id,
         // getBikeDetail:()=>{
         //     return 'select model_id , lock_id , uid_id,bike_booked_status,zone_id from inventory.tbl_product_bike where id =$1 ;'
         // },
-        
 
-        findNearestZone: () =>{
+        findNearestZone: () => {
             return `select zone.id from masters.tbl_zone_detail zone
             where ST_DWithin(ST_GeogFromText('POINT('|| $1 ||')'),
             ST_GeogFromText('POINT('|| CONCAT( zone.latitude,' ',zone.longitude)||')'), COALESCE((select cast(enum.enum_key as numeric(32,16)) from public.tbl_enum enum where enum.enum_type_name ='Vehicle Stand Redius (meter)' limit 1),0) )`;
-       },
+        },
         getBikeDetail: () => {
             return `SELECT 
             pb.id,
@@ -2936,9 +2871,8 @@ rb.ride_end_zone_id,
             `;
         },
 
-        getUserRideingStatus:()=>
-        {
-            return 'select bike_rideing_status  from admin.tbl_ride_booking where user_id = $1 and bike_rideing_status = 16 limit 1'
+        getUserRideingStatus: () => {
+            return 'select bike_rideing_status  from admin.tbl_ride_booking where user_id = $1 and bike_rideing_status = 16 limit 1';
         },
 
         subWalletAmount: () => {
@@ -2950,7 +2884,7 @@ rb.ride_end_zone_id,
         addDepositAmountFromWithdrawRequestCancel: () => {
             return `UPDATE admin.tbl_admin SET deposit_amount = deposit_amount + $1  WHERE id = $2`;
         },
-        getLockDetailForRideStartQuery:()=>{
+        getLockDetailForRideStartQuery: () => {
             return `select latitude ,longitude ,battery,speed ,internal_batt_v ,external_batt_v, 
             device_light_status_enum_id ,
             device_lock_and_unlock_status , 
@@ -2959,16 +2893,16 @@ rb.ride_end_zone_id,
            (select tenum.enum_key from public.tbl_enum tenum where  tenum.enum_id =deveice_state_enum_id)as deveice_state ,
            power_on_off_status_enum_id ,
            lock_number
-            from inventory.tbl_lock_detail  where id = $1`
-        } ,
-         checkRideStartOrNotForUser: () => {
+            from inventory.tbl_lock_detail  where id = $1`;
+        },
+        checkRideStartOrNotForUser: () => {
             return `select  tblride.bike_rideing_status,
             (select tblstatus.enum_key from tbl_enum tblstatus where tblstatus.enum_id = tblride.bike_rideing_status) as bike_rideing_status_name
             FROM admin.tbl_ride_booking tblride   WHERE                           
             (tblride.user_id = $1)
 			and tblride.bike_rideing_status = 16 ;`;
-        }, 
-  
+        },
+
         getRideBookingDetailsForRideEnd: () => {
             return `SELECT 
             tblride.id,  
@@ -2995,46 +2929,37 @@ rb.ride_end_zone_id,
             ;`;
         },
 
-        bikeUnderMantenancesHistory:()=>
-        {
+        bikeUnderMantenancesHistory: () => {
             return `insert into masters.tbl_bike_undermaintenance_history
          (bike_id, vehicle ,uid ,lock_no,bike_status_enum_id,remarks  , createdon_date ,created_by_id, status_enum_id)
-        values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
+        values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
         },
 
-       updateBikeStatusMantenances:()=>
-       {
-       return `update inventory.tbl_product_bike set  bike_booked_status = $5  WHERE id = $1 and model_id = $2 and uid_id=$3  and  lock_id =$4` ;
-
-       } ,
-        getZoneForRideBooking:()=>
-        {
+        updateBikeStatusMantenances: () => {
+            return `update inventory.tbl_product_bike set  bike_booked_status = $5  WHERE id = $1 and model_id = $2 and uid_id=$3  and  lock_id =$4`;
+        },
+        getZoneForRideBooking: () => {
             return `select zone_id from inventory.tbl_bike_allotment_zone_wise where vehicle_model_id= $1 and uid = $2 and status_enum_id = 1
-            order by  id desc  limit 1`
+            order by  id desc  limit 1`;
         },
 
-
-        getAreaAndAreaType:()=>
-        {
+        getAreaAndAreaType: () => {
             return `select zd.area_id ,
             a.map_city_id, a.area_type_enum_id
             from  
             masters.tbl_zone_detail zd
             inner join masters.tbl_area a on 
             a.id = zd.area_id
-            where zd.id = $1`
+            where zd.id = $1`;
         },
 
-        getFarePlanDataForRideBookings:()=>
-        {
+        getFarePlanDataForRideBookings: () => {
             return `select * from masters.tbl_fare_plan where aplicable_date =(select max(aplicable_date) from masters.tbl_fare_plan
-            where aplicable_date <=$1 and map_city_id = $2 and area_type_enum_id= $3 and model_id = $4 and area_id= $5  and status_enum_id=1 limit 1)`
-        },      
-    
+            where aplicable_date <=$1 and map_city_id = $2 and area_type_enum_id= $3 and model_id = $4 and area_id= $5  and status_enum_id=1 limit 1)`;
+        },
 
-
-    getRideBookingByUserIdAndLockNumber: () => {
-        return `SELECT tblride.id, tblride.user_id,
+        getRideBookingByUserIdAndLockNumber: () => {
+            return `SELECT tblride.id, tblride.user_id,
         (select tbladmin.user_name from admin.tbl_admin tbladmin  where tbladmin.id = tblride.user_id) as user_name,
         (select tbladmin.min_wallet_amount from admin.tbl_admin tbladmin  where tbladmin.id = tblride.user_id) as min_wallet_amount,
         (select tbladmin.extra_charges from admin.tbl_admin tbladmin  where tbladmin.id = tblride.user_id) as extra_charges,
@@ -3098,20 +3023,20 @@ rb.ride_end_zone_id,
         limit 10
     
         ;`;
-    },
-    updateUnlockFlag: () => {
-        return `update inventory.tbl_lock_detail set ride_start_unlock_flag_enum_id =$1 , ridestartunlockflaglastupdatetime =$2
+        },
+        updateUnlockFlag: () => {
+            return `update inventory.tbl_lock_detail set ride_start_unlock_flag_enum_id =$1 , ridestartunlockflaglastupdatetime =$2
                  where id = $3`;
-    },
-    updatePoweronFlag: () => {
-        return `update inventory.tbl_lock_detail set ride_start_poweron_flag_enum_id =$1 , ridestartpoweronflaglastupdatetime =$2
+        },
+        updatePoweronFlag: () => {
+            return `update inventory.tbl_lock_detail set ride_start_poweron_flag_enum_id =$1 , ridestartpoweronflaglastupdatetime =$2
                  where id = $3`;
-    },
+        },
 
-    getLockDetailForScheduleRideStartQuery:()=>{
-        return `select ride_start_unlock_flag_enum_id ,ride_start_poweron_flag_enum_id ,lock_number ,id 
-        from inventory.tbl_lock_detail where ride_start_unlock_flag_enum_id in (98,103) OR ride_start_poweron_flag_enum_id in (100,102)`
-    } ,
+        getLockDetailForScheduleRideStartQuery: () => {
+            return `select ride_start_unlock_flag_enum_id ,ride_start_poweron_flag_enum_id ,lock_number ,id 
+        from inventory.tbl_lock_detail where ride_start_unlock_flag_enum_id in (98,103) OR ride_start_poweron_flag_enum_id in (100,102)`;
+        }
     },
     userTransaction: {
         insertUserTransactionDetails: () => {
@@ -3241,14 +3166,14 @@ rb.ride_end_zone_id,
 			wtd.id = tbltran.withdrawn_id 
             WHERE (tbltran.user_id=$1 or $1=0)
             order by tbltran.id  desc limit 10;`;
-        }, 
+        },
 
         getTransactionExitOrNot: () => {
-            return `select  online_payment_status_enum_id  from admin.tbl_payment_transaction_details where id =$1`        
-           },
-           getUserTransaction: () => {
-            return ` select id  from  admin.tbl_user_transaction where payment_id =$1 ` 
-        } ,
+            return `select  online_payment_status_enum_id  from admin.tbl_payment_transaction_details where id =$1`;
+        },
+        getUserTransaction: () => {
+            return ` select id  from  admin.tbl_user_transaction where payment_id =$1 `;
+        },
         getUserPaymentOnlineTransaction: () => {
             return ` select  
  put.user_id,
@@ -3268,9 +3193,8 @@ rb.ride_end_zone_id,
  from admin.tbl_payment_transaction_details  put
  inner join admin.tbl_admin ad on 
  ad.id =  put.user_id
- where user_id =$1 ` 
-        } ,
-        
+ where user_id =$1 `;
+        }
     },
 
     deviceInformationLog: {
@@ -3297,12 +3221,9 @@ rb.ride_end_zone_id,
                  lock_id, device_id, status_enum_id,action_remarks, createdon_date, createdby_login_user_id, createdby_user_type_enum_id,  location, latitude, longitude, altitude, speed, battery, internal_batt_v, external_batt_v,previous_latitude,previous_longitude,distance_in_meters,ride_booking_id)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13,$14,$15,$16,$17,$18,$19);`;
         }
-
     },
-    areaMasters:
-    {
-        insertAreaDetail:  ()=>
-        {
+    areaMasters: {
+        insertAreaDetail: () => {
             return `INSERT INTO  masters.tbl_area(name,area_type_enum_id,status_enum_id,createdon_date,created_by_id,map_city_id,place_id , Pin_code,full_address,map_draw_object_enum_id ,map_draw_object ,map_draw_object_address,
                 area_api_circle_center ,
                 area_api_circle_redius,
@@ -3313,12 +3234,10 @@ rb.ride_end_zone_id,
                 area_api_db_polygon
                 ) 
                         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) returning id;`;
-
         },
 
-        getAreaDetails:()=>
-        {
-      return `     
+        getAreaDetails: () => {
+            return `     
 select 
 ta.id,
 ta.name,
@@ -3355,9 +3274,8 @@ cities on  cities.map_city_id =ta.map_city_id
       order by cities.map_city_name ,ta.name asc ;`;
         },
 
-        getCityAreaForBeepOnOff:()=>
-        {
-      return `     select   a.id as area_id,
+        getCityAreaForBeepOnOff: () => {
+            return `     select   a.id as area_id,
         a.map_city_id,
         a.area_type_enum_id ,
         lockDetail.id as lock_id,
@@ -3390,13 +3308,10 @@ cities on  cities.map_city_id =ta.map_city_id
   inner join masters.tbl_map_city mapc on 
    mapc.map_city_id = a.map_city_id
    where lockDetail.id = $1`;
-},
-        
+        },
 
-
-        getMapAreaDetailsForSearche:()=>
-        {
-      return `select 
+        getMapAreaDetailsForSearche: () => {
+            return `select 
       ta.id,
       ta.name,
       --(select s.map_state_id from masters.tbl_map_state s where  s.map_state_id =cities.map_state_id) map_state_id,
@@ -3440,11 +3355,8 @@ cities on  cities.map_city_id =ta.map_city_id
 	  (ta.id = $4 Or $4=0) order by countrys.map_country_name ,states.map_state_name,cities.map_city_name ,ta.name asc; `;
         },
 
-
-
-        getMapAreaDetails:()=>
-        {
-      return ` 	   
+        getMapAreaDetails: () => {
+            return ` 	   
       select 
       ta.id,
       ta.name,
@@ -3465,9 +3377,8 @@ cities on  cities.map_city_id =ta.map_city_id
       and (ta.area_type_enum_id = $3 OR $3 =0);`;
         },
 
-        getMapAreaDetailsReport:()=>
-        {
-      return ` 	   
+        getMapAreaDetailsReport: () => {
+            return ` 	   
       select 
       ta.id,
       ta.name,
@@ -3525,21 +3436,19 @@ cities on  cities.map_city_id =ta.map_city_id
              (tblzone.area_id = any($2) OR $2 = ('{0}'));`;
         },
 
+        //     getAreaCityState:()=>
+        //     {
+        //         return `select  distinct on(ta.city_id)
+        //         (select s.state_id from masters.tbl_state s where  s.state_id =cities.state_id) state_id,
+        //    (select s.state_name from masters.tbl_state s where  s.state_id =cities.state_id) state_name,
+        //    cities.city_name ,
+        //    ta.city_id
+        //    from  masters.tbl_fare_plan ta
+        //    inner join masters.tbl_cities
+        //    cities on  cities.city_id =ta.city_id order by ta.city_id desc `
+        //     },
 
-    //     getAreaCityState:()=>
-    //     {
-    //         return `select  distinct on(ta.city_id)    
-    //         (select s.state_id from masters.tbl_state s where  s.state_id =cities.state_id) state_id,
-    //    (select s.state_name from masters.tbl_state s where  s.state_id =cities.state_id) state_name,
-    //    cities.city_name ,
-    //    ta.city_id
-    //    from  masters.tbl_fare_plan ta 
-    //    inner join masters.tbl_cities
-    //    cities on  cities.city_id =ta.city_id order by ta.city_id desc `
-    //     },
-
-        getAreaMapCityState:()=>
-        {
+        getAreaMapCityState: () => {
             return `select  distinct on(ta.map_city_id)    
             (select s.map_state_id from masters.tbl_map_state s where  s.map_state_id =cities.map_state_id) state_id,
        (select s.map_state_name from masters.tbl_map_state s where  s.map_state_id =cities.map_state_id) state_name,
@@ -3554,13 +3463,10 @@ cities on  cities.map_city_id =ta.map_city_id
        cities on  cities.map_city_id =ta.map_city_id 
        inner join masters.tbl_area ar on
        ar.id = ta.area_id       
-       order by ta.map_city_id desc `
+       order by ta.map_city_id desc `;
         },
 
-        
-        updateAreaDetail:  ()=>
-        {
-             
+        updateAreaDetail: () => {
             return `update masters.tbl_area set name = $2, 			  
 			  
 			   area_type_enum_id = $3,
@@ -3583,9 +3489,7 @@ cities on  cities.map_city_id =ta.map_city_id
                 area_api_polygon = $18,
                 area_api_db_polygon = $19
 			   where id = $1;`;
-
         },
-
 
         getStatesForArea: () => {
             return `select state_id from masters.tbl_state where state_id = $1`;
@@ -3599,7 +3503,7 @@ cities on  cities.map_city_id =ta.map_city_id
         },
         getMapCities: () => {
             return `select map_state_id from masters.tbl_map_city where map_city_id = $1`;
-        },       
+        },
 
         getzoneDetailWithBikeCountList: () => {
             return ` select 
@@ -3642,7 +3546,7 @@ cities on  cities.map_city_id =ta.map_city_id
             where ( UPPER(TRIM(countrys.map_country_name)) = UPPER(TRIM($1)) OR $1='' ) and 
 			( UPPER(TRIM(states.map_state_name)) = UPPER(TRIM($2)) Or $2 ='')
 			and ( UPPER(TRIM(cities.map_city_name)) = UPPER(TRIM($3)) Or $3 ='' OR  UPPER(TRIM(cities.user_city_name)) = UPPER(TRIM($3)) )`;
-        },  
+        },
 
         getzoneDetailWithBikeCountList1: () => {
             return `select 
@@ -3684,8 +3588,8 @@ cities on  cities.map_city_id =ta.map_city_id
             states.map_country_id   = countrys.map_country_id        
             where  (zd.id = $1 Or $1=0)
             `;
-        }, 
-        
+        },
+
         getzoneDetailWithBikeAllTypeCountList: () => {
             return ` 
             select 
@@ -3733,7 +3637,7 @@ cities on  cities.map_city_id =ta.map_city_id
 			and ( UPPER(TRIM(cities.map_city_name)) = UPPER(TRIM($3)) Or $3 ='' OR  UPPER(TRIM(cities.user_city_name)) = UPPER(TRIM($3)) )
             and  (zd.id = $4 Or $4 = 0)
       `;
-        }, 
+        },
         getAreaDetailWithBikeCountList: () => {
             return `    select 
         ta.id,  
@@ -3757,41 +3661,33 @@ and ( UPPER(TRIM(cities.map_city_name)) = UPPER(TRIM($3)) OR $3 =''  OR  UPPER(T
 group by ta.id
 order by ta.id desc
 `;
-},  
-        checkMapAreaNameExists: () => 
-        {
-            return `SELECT id FROM masters.tbl_area where UPPER(TRIM(name))= UPPER(TRIM($2)) and map_city_id = $3 and id <> $1 limit 1`
+        },
+        checkMapAreaNameExists: () => {
+            return `SELECT id FROM masters.tbl_area where UPPER(TRIM(name))= UPPER(TRIM($2)) and map_city_id = $3 and id <> $1 limit 1`;
         },
 
         getVehicleTypeList: () => {
             return `select id, name  from masters.tbl_vehicle_type where status_enum_id = 1`;
-        },  
-        
+        },
 
-        insertMapCountryQuery:  ()=>
-        {
+        insertMapCountryQuery: () => {
             return `INSERT INTO  masters.tbl_map_country(map_country_name,status_enum_id,createdon_date ,createdby_login_user_id ) 
                         VALUES ($1,$2,$3,$4) returning map_country_id;`;
-
         },
-        checkMapCountryNameExistsQuery: () => 
-        {
-            return `SELECT map_country_id FROM masters.tbl_map_country where UPPER(TRIM(map_country_name))= UPPER(TRIM($1)) and map_country_id  <> $2 limit 1`
+        checkMapCountryNameExistsQuery: () => {
+            return `SELECT map_country_id FROM masters.tbl_map_country where UPPER(TRIM(map_country_name))= UPPER(TRIM($1)) and map_country_id  <> $2 limit 1`;
         },
 
-        insertMapStateQuery:  ()=>
-        {
+        insertMapStateQuery: () => {
             return `INSERT INTO  masters.tbl_map_state(map_state_name,map_country_id,status_enum_id,createdon_date ,createdby_login_user_id ) 
                         VALUES ($1,$2,$3,$4,$5) returning map_state_id;`;
         },
 
-        checkMapStateNameExistsQuery: () => 
-        {
-            return `SELECT map_state_id FROM masters.tbl_map_state where UPPER(TRIM(map_state_name))= UPPER(TRIM($1))  and map_country_id =$2 limit 1`
+        checkMapStateNameExistsQuery: () => {
+            return `SELECT map_state_id FROM masters.tbl_map_state where UPPER(TRIM(map_state_name))= UPPER(TRIM($1))  and map_country_id =$2 limit 1`;
         },
 
-        insertMapCityQuery:  ()=>
-        {
+        insertMapCityQuery: () => {
             return `INSERT INTO  masters.tbl_map_city (
                 map_city_name,
                 map_state_id,
@@ -3815,11 +3711,9 @@ order by ta.id desc
                 city_api_db_polygon
                  ) 
                         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) returning map_city_id;`;
-
         },
 
-        updateMapCityQuery:  ()=>
-        {
+        updateMapCityQuery: () => {
             return `update masters.tbl_map_city  set 
                 map_city_name =$2,
                 map_state_id =$3,
@@ -3841,28 +3735,22 @@ order by ta.id desc
                 city_api_polygon = $18,
                 city_api_db_polygon = $19
                 where map_city_id = $1`;
-
         },
 
-
-        checkMapCityNameExistsQuery: () => 
-        {
-            return `SELECT map_city_id FROM masters.tbl_map_city where UPPER(TRIM(map_city_name))= UPPER(TRIM($1))  and map_state_id = $2 and map_city_id <> $3 limit 1`
+        checkMapCityNameExistsQuery: () => {
+            return `SELECT map_city_id FROM masters.tbl_map_city where UPPER(TRIM(map_city_name))= UPPER(TRIM($1))  and map_state_id = $2 and map_city_id <> $3 limit 1`;
         },
 
-        checkMapCityNameForSearchExistsQuery: () => 
-        {
-            return `SELECT map_city_id FROM masters.tbl_map_city where (UPPER(TRIM(map_city_name))= UPPER(TRIM($1)) OR UPPER(TRIM($1))='' )   and (map_state_id = $2) limit 1`
-        },
-        
-        checkUserCityNameExistsQuery: () => 
-        {
-            return `SELECT map_city_id FROM masters.tbl_map_city where UPPER(TRIM(user_city_name))= UPPER(TRIM($1))  and map_state_id = $2 and map_city_id <> $3 limit 1`
+        checkMapCityNameForSearchExistsQuery: () => {
+            return `SELECT map_city_id FROM masters.tbl_map_city where (UPPER(TRIM(map_city_name))= UPPER(TRIM($1)) OR UPPER(TRIM($1))='' )   and (map_state_id = $2) limit 1`;
         },
 
-        getCityDataForTableQuery: () => 
-        {
-       return `select           
+        checkUserCityNameExistsQuery: () => {
+            return `SELECT map_city_id FROM masters.tbl_map_city where UPPER(TRIM(user_city_name))= UPPER(TRIM($1))  and map_state_id = $2 and map_city_id <> $3 limit 1`;
+        },
+
+        getCityDataForTableQuery: () => {
+            return `select           
        states.map_state_id,
        states.map_state_name,
        cities.map_city_name ,
@@ -3875,12 +3763,11 @@ order by ta.id desc
        inner join masters.tbl_map_state states on
        states.map_state_id =cities.map_state_id 
        order by states.map_state_name ,cities.map_city_name ,
-       cities.user_city_name asc `
-       },
+       cities.user_city_name asc `;
+        },
 
-       getMapCityDetailQuery: () => 
-       {
-      return `select  
+        getMapCityDetailQuery: () => {
+            return `select  
       countrys.map_country_id,
       countrys.map_country_name,
       states.map_state_id,
@@ -3910,12 +3797,11 @@ order by ta.id desc
       states.map_state_id =cities.map_state_id 
      inner join masters.tbl_map_country countrys on
       states.map_country_id   = countrys.map_country_id  
-     where  (cities.map_city_id =$1 OR $1=0) `
-      },
+     where  (cities.map_city_id =$1 OR $1=0) `;
+        },
 
-      getMapCityDetailReportQuery: () => 
-      {
-     return `select  
+        getMapCityDetailReportQuery: () => {
+            return `select  
      countrys.map_country_id,
      countrys.map_country_name,
      states.map_state_id,
@@ -3945,12 +3831,11 @@ order by ta.id desc
      states.map_state_id =cities.map_state_id 
     inner join masters.tbl_map_country countrys on
      states.map_country_id   = countrys.map_country_id  
-    where  ( cities.map_state_id =any($1) OR $1=('{0}') ) `
-     },
+    where  ( cities.map_state_id =any($1) OR $1=('{0}') ) `;
+        },
 
-      getMapCityDetailsForSearcheQ:()=>
-      {
-    return `select  
+        getMapCityDetailsForSearcheQ: () => {
+            return `select  
     countrys.map_country_id,
     countrys.map_country_name,
     states.map_state_id,
@@ -3985,19 +3870,16 @@ order by ta.id desc
    (UPPER(TRIM(states.map_state_name)) = UPPER(TRIM($2)) OR $2 ='' ) and
     (UPPER(TRIM(cities.map_city_name)) =UPPER(TRIM($3)) OR $3=''OR UPPER(TRIM(cities.user_city_name)) =UPPER(TRIM($3)))
     order by countrys.map_country_name,states.map_state_name ,cities.map_city_name asc  `;
-      },
+        }
     },
 
     //UPPER(TRIM(emailid))=UPPER(TRIM($1))
 
-   
-    farePlanMasters:
-    {
+    farePlanMasters: {
         getfareIdList: () => {
             return `select map_city_id , area_id ,model_id,aplicable_date from masters.tbl_fare_plan where id = $1 limit 1`;
         },
-        insertFarePlanDetail:  ()=>
-        {
+        insertFarePlanDetail: () => {
             return `insert into masters.tbl_fare_plan
             (
                 map_city_id ,area_type_enum_id,area_id ,model_id ,aplicable_date ,per_minute_rate_monday ,
@@ -4008,13 +3890,9 @@ order by ta.id desc
             (
             $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
             ) returning id;`;
-
         },
 
-        
-
-        getFarePlanDetails:()=>
-        {
+        getFarePlanDetails: () => {
             return `select 
             fp.id,          
             fp.hire_minuts ,
@@ -4048,11 +3926,10 @@ order by ta.id desc
 			 and  (fp.model_id= $3 or  $3=0)
 			 and (fp.area_id = $4 or  $4 =0)
 			 and (fp.status_enum_id=$5 or  $5 =0)
-`
+`;
         },
-        updateFarePlanDetail:()=>
-        {
-        return `update masters.tbl_fare_plan set 
+        updateFarePlanDetail: () => {
+            return `update masters.tbl_fare_plan set 
                  map_city_id =$2 ,
                  area_type_enum_id=$3,
                  area_id =$4,
@@ -4075,7 +3952,7 @@ order by ta.id desc
                  created_by_id =$16,
                  hire_minuts = $17                 
 
-                 where id =$1`
+                 where id =$1`;
         },
 
         getArea: () => {
@@ -4088,27 +3965,24 @@ order by ta.id desc
         getLockNumber: () => {
             return `select lock_number FROM inventory.tbl_lock_detail  WHERE id = $1`;
         },
-        checkFareCloseExists: () => 
-        {
-           // farePlanId, cityId, modelId, areaTypeEnumId, areaId, aplicableDate
+        checkFareCloseExists: () => {
+            // farePlanId, cityId, modelId, areaTypeEnumId, areaId, aplicableDate
             return `SELECT id FROM masters.tbl_fare_plan where 
             map_city_id=$2 and
             area_type_enum_id =$3 and
             (area_id=$4 or $4=0) and
             model_id=$5 and
             aplicable_date=$6 and
-            id <> $1 limit 1`
+            id <> $1 limit 1`;
         },
 
-      
         getuidModelData: () => {
             return `select id  FROM inventory.tbl_uid where  id =$1 and model_id =$2 `;
         },
         getQrNumberExistData: () => {
             return `select id  FROM inventory.tbl_product_bike where  id <> $1 and qr_number= $2 `;
         },
-        getReportBike: () => 
-        {   
+        getReportBike: () => {
             return `select 
     rb.id,
 	rb.user_id,
@@ -4142,17 +4016,13 @@ order by ta.id desc
 	where 
     (rb.user_id =$1 OR  $1=0)
 	and (rb.id = $2 OR $2=0)
-	order by id desc`
-        },
-
-
+	order by id desc`;
+        }
     },
 
-    RideEarningReports:
-    {
-       userWiseRideEarningQuery:()=>
-       {
-        return `select 
+    RideEarningReports: {
+        userWiseRideEarningQuery: () => {
+            return `select 
         count(rb.id) as total_ride,
         sum(rb.total_ride_amount) as total_ride_amount,
         rb.user_id,
@@ -4198,14 +4068,11 @@ order by ta.id desc
 		and(rb.ride_start_zone_id = any($13) OR $13 =('{0}'))				
 		and (ear.id  =any($14) OR $14 =('{0}'))
 		and(rb.ride_end_zone_id = any($15) OR $15 =('{0}'))   
-         group by rb.user_id ,ad.user_name,ad.mobile`
-       },
+         group by rb.user_id ,ad.user_name,ad.mobile`;
+        },
 
-
-
-       bikeWiseRideEarningQuery:()=>
-       {
-        return `select 
+        bikeWiseRideEarningQuery: () => {
+            return `select 
         count(rb.id) as no_of_ride, 
         sum(rb.total_ride_amount) as total_ride_amount,
         pb.id  as bike_id,
@@ -4254,12 +4121,11 @@ order by ta.id desc
 		and(rb.ride_start_zone_id = any($13) OR $13 =('{0}'))				
 		and (ear.id  =any($14) OR $14 =('{0}'))
 		and(rb.ride_end_zone_id = any($15) OR $15 =('{0}'))
-        group by pb.id,pb.bike_name `
-       },
+        group by pb.id,pb.bike_name `;
+        },
 
-       userIdOrBikeIdWiseRideEarningDetailQuery:()=>
-       {
-        return `select        
+        userIdOrBikeIdWiseRideEarningDetailQuery: () => {
+            return `select        
         rb.from_ride_time ,
         rb.actual_ride_time ,    
         rb.minimum_hiring_time,
@@ -4338,12 +4204,11 @@ order by ta.id desc
 		and(rb.ride_start_zone_id = any($13) OR $13 =('{0}'))	
 
 		and (ear.id  =any($14) OR $14 =('{0}'))
-		and(rb.ride_end_zone_id = any($15) OR $15 =('{0}'))`
-       },
-   
-       rideReportDetailQuery:()=>
-       {
-        return `select 
+		and(rb.ride_end_zone_id = any($15) OR $15 =('{0}'))`;
+        },
+
+        rideReportDetailQuery: () => {
+            return `select 
         rb.id,
         rb.from_ride_time ,
         rb.to_ride_time ,    
@@ -4366,18 +4231,13 @@ order by ta.id desc
 
         from admin.tbl_ride_booking rb
         where rb.bike_rideing_status= $3
-        and rb.from_ride_time  between $1 and $2`
-       }  ,
-
-
+        and rb.from_ride_time  between $1 and $2`;
+        }
     },
 
-
-    deviceLogInfoReports:
-    {
-       LogInfoReportsQuery:()=>
-       {
-        return `
+    deviceLogInfoReports: {
+        LogInfoReportsQuery: () => {
+            return `
         select 
         id,
         lock_id ,
@@ -4433,12 +4293,11 @@ order by ta.id desc
         or (($15='available' and beep_instruction_enum_id is not null) or ($15 = 'not available' and beep_instruction_enum_id is null) or ($15='both'))         
 		or (($16='available' and beep_status_enum_id is not null) or ($16 = 'not available' and beep_status_enum_id is null) or ($16='both'))
         or (($17='available' and power_status_enum_id is not null) or ($17 = 'not available' and power_status_enum_id is null) or ($17='both'))        
-        )`
-       },
+        )`;
+        },
 
-       lockUnlcokdeviceLogInfoReportsQuery:()=>
-       {
-        return `select 
+        lockUnlcokdeviceLogInfoReportsQuery: () => {
+            return `select 
         id,
         lock_id ,
         device_id ,  
@@ -4453,12 +4312,11 @@ order by ta.id desc
         and createdon_date between  $3  and $4
       --  and device_lock_and_unlock_status !=null
         --and instruction_id !=null
-        order by id desc `
-       },
-       
-       deviceLogInfoReportsQuery:()=>
-       {
-        return ` select 
+        order by id desc `;
+        },
+
+        deviceLogInfoReportsQuery: () => {
+            return ` select 
         id,
         lock_id ,
         device_id ,  
@@ -4475,10 +4333,7 @@ order by ta.id desc
         from admin.tbl_add_device_information_log 	
         where lock_id =$1 and device_id =$2 
         and createdon_date between  $3  and $4      
-        order by id desc`
-       },  
-       
-       
-   
+        order by id desc`;
+        }
     }
 };

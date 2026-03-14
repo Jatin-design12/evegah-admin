@@ -6,5 +6,4 @@ export const rideBookingValidation = async (requestBody: any) => {
     if (!requestBody.bikeId) {
         return (message = 'Please Enter Valid bikeId Id.');
     }
-
 };

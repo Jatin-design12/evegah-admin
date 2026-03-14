@@ -1,4 +1,3 @@
-export const kClientName =
- {
-     clientEvegah: 'Evegah',
-}
+export const kClientName = {
+    clientEvegah: 'Evegah'
+};

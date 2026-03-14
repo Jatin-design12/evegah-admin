@@ -4,7 +4,7 @@ import { getUTCdate } from '../../helper/datetime';
 import request from 'request';
 import config from '../../Config/config';
 import { AddExceptionIntoDB } from '../../helper/responseHandler';
-import { calculateSecond} from '../../helper/common-function';
+import { calculateSecond } from '../../helper/common-function';
 class InwardServices {
     constructor() {}
 
@@ -23,8 +23,7 @@ class InwardServices {
             }
         });
     }
-  
-  
+
     async updateBikeAllocatedToProduction(inwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.bikeInward.updateBikeAllocatedToProduction(),
@@ -40,7 +39,7 @@ class InwardServices {
             }
         });
     }
-    
+
     async insertBikeUId(inwardDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
@@ -70,18 +69,17 @@ class InwardServices {
         let actionOnDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.inwardQueries.bikeInward.updateUIdNumberByInward(),
-            values: [                
+            values: [
                 inwardDetails.vehicleModelUId,
                 inwardDetails.statusEnumId,
-                inwardDetails.remark,                      
+                inwardDetails.remark,
                 actionOnDate,
-                inwardDetails.actionByLoginUserId,     
+                inwardDetails.actionByLoginUserId,
                 inwardDetails.vehicleId,
                 inwardDetails.inwardDate,
                 inwardDetails.bikeInwardId
             ]
         };
-        
 
         return new Promise<string>(async (resolve, reject) => {
             try {
@@ -92,7 +90,6 @@ class InwardServices {
             }
         });
     }
-  
 
     async getBikeInwardDetails(inwardDetails: any) {
         let query: any = {
@@ -123,12 +120,12 @@ class InwardServices {
                 reject(error);
             }
         });
-    }    
+    }
 
     async IMEIAndLockNumberExitService(lockInwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.IMEIAndLockNumberExit(),
-            values: [lockInwardDetails.imeiN,lockInwardDetails.dId]
+            values: [lockInwardDetails.imeiN, lockInwardDetails.dId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -141,7 +138,6 @@ class InwardServices {
         });
     }
 
-    
     async insertLockDetails(lockInwardDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
@@ -154,19 +150,18 @@ class InwardServices {
                 lockInwardDetails.actionByUserTypeEnumId,
                 actionOnDate,
                 lockInwardDetails.instructionId,
-                lockInwardDetails.deviceLightStatusEnumId ,
-                lockInwardDetails.deviceLightInstructionEnumId ,
-               lockInwardDetails.deviceLockAndUnlockStatus,
-               lockInwardDetails.beepInstructionEnumId ,
-               lockInwardDetails.beepStatusEnumId ,
-               lockInwardDetails.lastDistanceInMeters,
-               lockInwardDetails.totalDistanceInMeters,
-               lockInwardDetails.inwardDate ,
-               lockInwardDetails.lockIMEINumber
-                      ]
+                lockInwardDetails.deviceLightStatusEnumId,
+                lockInwardDetails.deviceLightInstructionEnumId,
+                lockInwardDetails.deviceLockAndUnlockStatus,
+                lockInwardDetails.beepInstructionEnumId,
+                lockInwardDetails.beepStatusEnumId,
+                lockInwardDetails.lastDistanceInMeters,
+                lockInwardDetails.totalDistanceInMeters,
+                lockInwardDetails.inwardDate,
+                lockInwardDetails.lockIMEINumber
+            ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -175,7 +170,7 @@ class InwardServices {
                 reject(error);
             }
         });
-    }   
+    }
 
     async updateLockDetailsSever(lockInwardDetails: any) {
         let actionOnDate = getUTCdate();
@@ -187,14 +182,13 @@ class InwardServices {
                 lockInwardDetails.remark,
                 lockInwardDetails.instructionId,
                 actionOnDate,
-                lockInwardDetails.actionByLoginUserId   ,
-                lockInwardDetails.lockId  ,
-                lockInwardDetails.inwardDate ,
-                lockInwardDetails.lockIMEINumber                     
+                lockInwardDetails.actionByLoginUserId,
+                lockInwardDetails.lockId,
+                lockInwardDetails.inwardDate,
+                lockInwardDetails.lockIMEINumber
             ]
-        };       
-        
-        
+        };
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -204,8 +198,6 @@ class InwardServices {
             }
         });
     }
-  
-
 
     async getLockInwardDetails(lockInwardDetails: any) {
         let query: any = {
@@ -254,7 +246,6 @@ class InwardServices {
         });
     }
 
-    
     async getLockList() {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.getLockList(),
@@ -270,7 +261,7 @@ class InwardServices {
             }
         });
     }
-   
+
     async activeInactiveLockNumber(lockInwardDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
@@ -278,7 +269,6 @@ class InwardServices {
             values: [lockInwardDetails.statusEnumId, actionOnDate, lockInwardDetails.lockId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -288,8 +278,7 @@ class InwardServices {
             }
         });
     }
- 
-  
+
     async activeInactiveUid(bikeInwardDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
@@ -323,7 +312,6 @@ class InwardServices {
     }
 
     async getRegistrationStatusOfLock(lockDetails: any) {
-             
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.checkRegistrationStatus(),
             values: [lockDetails]
@@ -337,16 +325,14 @@ class InwardServices {
                 reject(error);
             }
         });
-        
     }
 
     async deviceInternalCallingTime() {
-        
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.deviceInternalCallingTimeQ()
             //values: [lockDetails]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -355,11 +341,7 @@ class InwardServices {
                 reject(error);
             }
         });
-        
     }
-    
-   
-    
 
     async deleteLock(lockInwardDetails: any) {
         let query: any = {
@@ -376,7 +358,7 @@ class InwardServices {
             }
         });
     }
- 
+
     async getLockDetails(lockInwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.getLockDetails(),
@@ -387,16 +369,14 @@ class InwardServices {
             try {
                 let result: any = await client.query(query);
                 let lockDetails = [];
-                let apiCallingTime :any ='10';
-                let deviceInternalCallingTimeResult :any  = await this.deviceInternalCallingTime();
-                if(deviceInternalCallingTimeResult.rows.count > 0)
-                {
-                    apiCallingTime =deviceInternalCallingTimeResult.rows[0]?.enum_key; 
+                let apiCallingTime: any = '10';
+                let deviceInternalCallingTimeResult: any = await this.deviceInternalCallingTime();
+                if (deviceInternalCallingTimeResult.rows.count > 0) {
+                    apiCallingTime = deviceInternalCallingTimeResult.rows[0]?.enum_key;
                 }
                 for (let row of result.rows) {
-           
-                   // checkTimeData.lastdevicerequesttime_DB = getLockDetails.rows[0].lastdevicerequesttime
-                    let lastUpdateTime :any = getUTCdate()
+                    // checkTimeData.lastdevicerequesttime_DB = getLockDetails.rows[0].lastdevicerequesttime
+                    let lastUpdateTime: any = getUTCdate();
                     let timeDifference: any = await calculateSecond(row.lastdevicerequesttime, lastUpdateTime);
                     lockDetails.push({
                         lockId: row.id,
@@ -414,12 +394,12 @@ class InwardServices {
                         deviceLockAndUnlockStatus: row.device_lock_and_unlock_status,
                         deviceLockAndUnlockStatusName: row.device_lock_and_unlock_status_name, // === '2' ? 'Lock' : 'UnLock',
 
-                        deveice_state_enum_id :Number(row.deveice_state_enum_id),
-                        device_state_enum_id :Number(row.deveice_state_enum_id),
-                        
-                        deveiceState : row.deveice_state,
-                        deviceState : row.deveice_state,
-                        device_last_request_time :row.device_last_request_time,
+                        deveice_state_enum_id: Number(row.deveice_state_enum_id),
+                        device_state_enum_id: Number(row.deveice_state_enum_id),
+
+                        deveiceState: row.deveice_state,
+                        deviceState: row.deveice_state,
+                        device_last_request_time: row.device_last_request_time,
                         instructionId: row.instruction_id,
                         registrationStatus: row.registartion_status,
                         imeiNumber: row.imei_number,
@@ -428,16 +408,16 @@ class InwardServices {
                         runTime: row.run_time,
                         chassisNumber: row.chassis_number,
                         dateOfManufacture: row.date_of_manufacture,
-                        dateOfService: row.date_of_service ,
-                        deviceLightInstructionEnumId : row.device_light_instruction_enum_id,
-                        deviceLightInstruction : row.device_light_instruction,
-                        deviceLightStatus : row.device_light_status ,
-                        deviceLightStatusEnumId : row.device_light_status_enum_id,
-                        powerOnOffStatusEnumId : row.power_on_off_status_enum_id,
-                        powerOnOffStatus : row.power_on_off_status,
-                        lastdevicerequesttime : row.lastdevicerequesttime,
-                        IntervalTime : apiCallingTime ,
-                        apiCalledTime : timeDifference
+                        dateOfService: row.date_of_service,
+                        deviceLightInstructionEnumId: row.device_light_instruction_enum_id,
+                        deviceLightInstruction: row.device_light_instruction,
+                        deviceLightStatus: row.device_light_status,
+                        deviceLightStatusEnumId: row.device_light_status_enum_id,
+                        powerOnOffStatusEnumId: row.power_on_off_status_enum_id,
+                        powerOnOffStatus: row.power_on_off_status,
+                        lastdevicerequesttime: row.lastdevicerequesttime,
+                        IntervalTime: apiCallingTime,
+                        apiCalledTime: timeDifference
                     });
                 }
                 resolve(lockDetails);
@@ -462,13 +442,11 @@ class InwardServices {
         });
     }
 
-
     async checkLockNumberExitService(lockInwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.checkLockNumberExit(),
-            values: [lockInwardDetails.lockNumber ,lockInwardDetails.lockId ]
+            values: [lockInwardDetails.lockNumber, lockInwardDetails.lockId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -483,9 +461,8 @@ class InwardServices {
     async checimeiNumberExitService(lockInwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.checimeiNumberExit(),
-            values: [lockInwardDetails.lockIMEINumber ,lockInwardDetails.lockId ]
+            values: [lockInwardDetails.lockIMEINumber, lockInwardDetails.lockId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -497,14 +474,11 @@ class InwardServices {
         });
     }
 
-    
-
     async checkLockNameExitService(lockdetail: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.checkLockNameExit(),
             values: [lockdetail.name]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -521,7 +495,6 @@ class InwardServices {
             text: DB_CONFIGS.inwardQueries.lockInward.checkuniqueidExit(),
             values: [uniqueid]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -537,7 +510,6 @@ class InwardServices {
             text: DB_CONFIGS.inwardQueries.lockInward.checkdeviceidExit(),
             values: [deviceid]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -554,7 +526,6 @@ class InwardServices {
             text: DB_CONFIGS.inwardQueries.lockInward.checkDeviceStateExit(),
             values: [state]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -566,14 +537,13 @@ class InwardServices {
         });
     }
 
-    async insertDeviceStateService(state: any,) {
-       let status_enum_id :any ='1';
-       let actionOnDate = getUTCdate();
+    async insertDeviceStateService(state: any) {
+        let status_enum_id: any = '1';
+        let actionOnDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertDeviceState(),
-            values: [state,status_enum_id,actionOnDate ]
+            values: [state, status_enum_id, actionOnDate]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -585,78 +555,73 @@ class InwardServices {
         });
     }
     async insertDeviceDetailForUserAPIService(data: any) {
-
-        let inwardDate :any =getUTCdate();        
+        let inwardDate: any = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertDeviceDetailForUserAPIQuery(),
             values: [
-                data.name , 
+                data.name,
                 data.deviceid,
                 data.uniqueid,
-                data.moving ,
+                data.moving,
                 data.ignition,
-              data.statesEnumId ,
-              data.type ,
-              data.disabled ,
-              data.created_at_date,
-              data.accountid,
-              data.statesince_date,
-              data.protocol,
-              data.servertime,
-              data.devicetime,
-              data.fixtime ,
-              data.valid,// data.isvalid_deevice_packet ,
-              data.course,
-              data.address,
-              data.accuracy,
-              data.network,
-              data.location ,
-              data.latitude ,
-              data.longitude ,
-              data.altitude,
-              data.speed,
-              data.battery,
-              data.internal_batt_v,
-              data.external_batt_v,
-              data.device_lock_and_unlock_status ,
-              data.instruction_id ,
-              data.registartion_status ,
-              data.uniqueid,   
-              data.allotment_status_id,
-              data.deveice_state_enum_id ,
-              data.device_last_request_time,
-              data.uniqueid,//data.lock_number,
-              data.statusEnumId,
-              data.createdon_date,
-              data.remarks,
-              data.em_devece_type,
-              data.me_state_name ,
-              inwardDate ,
-              data.powerOnOff,
-             data.lastdevicerequesttime
+                data.statesEnumId,
+                data.type,
+                data.disabled,
+                data.created_at_date,
+                data.accountid,
+                data.statesince_date,
+                data.protocol,
+                data.servertime,
+                data.devicetime,
+                data.fixtime,
+                data.valid, // data.isvalid_deevice_packet ,
+                data.course,
+                data.address,
+                data.accuracy,
+                data.network,
+                data.location,
+                data.latitude,
+                data.longitude,
+                data.altitude,
+                data.speed,
+                data.battery,
+                data.internal_batt_v,
+                data.external_batt_v,
+                data.device_lock_and_unlock_status,
+                data.instruction_id,
+                data.registartion_status,
+                data.uniqueid,
+                data.allotment_status_id,
+                data.deveice_state_enum_id,
+                data.device_last_request_time,
+                data.uniqueid, //data.lock_number,
+                data.statusEnumId,
+                data.createdon_date,
+                data.remarks,
+                data.em_devece_type,
+                data.me_state_name,
+                inwardDate,
+                data.powerOnOff,
+                data.lastdevicerequesttime
             ]
         };
-                        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
-                
+
                 resolve(result);
             } catch (error) {
-                
                 reject(error);
             }
         });
     }
-
 
     async checkLockIdervice(lockInwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.checkLockIdExit(),
             values: [lockInwardDetails.lockId]
         };
-
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -674,24 +639,6 @@ class InwardServices {
             values: [lockInwardDetails.lockNumber]
         };
 
-      
-        return new Promise(async (resolve, reject) => {
-            try {
-                let result = await client.query(query);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }           
-
-    async insertPostBodyDataService(data: any,actionDate :any ) {
-        let query: any = {
-            text: DB_CONFIGS.inwardQueries.lockInward.insertPostBodyDataQuery(),
-            values: [data,actionDate]
-        };
-
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -702,11 +649,26 @@ class InwardServices {
         });
     }
 
+    async insertPostBodyDataService(data: any, actionDate: any) {
+        let query: any = {
+            text: DB_CONFIGS.inwardQueries.lockInward.insertPostBodyDataQuery(),
+            values: [data, actionDate]
+        };
 
-    async insertGetBodyDataService(dataDetail: any,actionDate :any) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    async insertGetBodyDataService(dataDetail: any, actionDate: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertGetBodyDataQuery(),
-            values: [dataDetail,actionDate]
+            values: [dataDetail, actionDate]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -739,7 +701,7 @@ class InwardServices {
     async activeDeactiveBikeService(inwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.bikeInward.activeDeactiveBike(),
-            values: [inwardDetails.statusEnumId,inwardDetails.bikeId]
+            values: [inwardDetails.statusEnumId, inwardDetails.bikeId]
         };
 
         return new Promise<string>(async (resolve, reject) => {
@@ -752,14 +714,12 @@ class InwardServices {
         });
     }
 
-    
-    
     //---2
 
     async updateBikeAllocatedToInward(inwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.bikeInward.updateBikeAllocatedToInward(),
-            values: [inwardDetails.uId, inwardDetails.allotmentStatusId,inwardDetails.statusEnumId]
+            values: [inwardDetails.uId, inwardDetails.allotmentStatusId, inwardDetails.statusEnumId]
         };
 
         return new Promise<string>(async (resolve, reject) => {
@@ -771,14 +731,13 @@ class InwardServices {
             }
         });
     }
-    
 
-    //---3 
+    //---3
 
     async updateBikeUIdStatusFromBikeProduce(inwardDetails: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.bikeInward.updateBikeUIdStatusFromBikeProduce(),
-            values: [inwardDetails.uId,inwardDetails.allotmentStatusId]
+            values: [inwardDetails.uId, inwardDetails.allotmentStatusId]
         };
 
         return new Promise<string>(async (resolve, reject) => {
@@ -790,11 +749,8 @@ class InwardServices {
             }
         });
     }
-    
 
-
-  
-  // console.log('link', config.serverUrl + `/getLockDetailsFromDevice?lockId=${lockDetails.lockId}`);
+    // console.log('link', config.serverUrl + `/getLockDetailsFromDevice?lockId=${lockDetails.lockId}`);
     // return new Promise((resolve, reject) => {
     //     request(
     //         {
@@ -815,7 +771,6 @@ class InwardServices {
     //     );
     // });
 
-
     // async insertApiRequestAndResponceService(requestData :any,RequestFrom :any,createdonDate:any) {
     //     let query: any = {
     //         text: DB_CONFIGS.inwardQueries.lockInward.insertApiRequestAndResponceDataQuery(),
@@ -832,29 +787,27 @@ class InwardServices {
     //     });
     // }
 
-
-    async insertApiRequestService(queryDetail :any,requestData :any) {
-        let actionDate :any = getUTCdate()
+    async insertApiRequestService(queryDetail: any, requestData: any) {
+        let actionDate: any = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertApiRequestDataQuery(),
-            values: 
-            [
-                queryDetail.frontendOptionName ,
-                queryDetail.frontendPageName ,
-                queryDetail.frontendActionName, 
-                queryDetail.apiMethodEnumId ,
-                queryDetail.apiUrl , 
-                queryDetail.apiRequestFromEnumId ,
-                queryDetail.access_token ,
-                requestData ,              
+            values: [
+                queryDetail.frontendOptionName,
+                queryDetail.frontendPageName,
+                queryDetail.frontendActionName,
+                queryDetail.apiMethodEnumId,
+                queryDetail.apiUrl,
+                queryDetail.apiRequestFromEnumId,
+                queryDetail.access_token,
+                requestData,
                 actionDate,
                 queryDetail.custumNodeLoginUserId,
-                queryDetail.requestIpAddress ,
+                queryDetail.requestIpAddress,
                 queryDetail.customeNodelockNumber
             ]
         };
-        
-      //  console.log('check data ', query)
+
+        //  console.log('check data ', query)
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -865,23 +818,12 @@ class InwardServices {
         });
     }
 
-    async updateApiResponceDataService(requestResponseId:any ,responseData :any,
-        responseStatusEnumId:any ,
-        exceptionFull:any,
-        exceptionName:any ,
-        exceptionMessage:any) {
-
-            
+    async updateApiResponceDataService(requestResponseId: any, responseData: any, responseStatusEnumId: any, exceptionFull: any, exceptionName: any, exceptionMessage: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.updateApiResponceDataQuery(),
-            values: [requestResponseId,responseData ,
-                responseStatusEnumId ,
-                exceptionFull,
-                exceptionName ,
-                exceptionMessage]
+            values: [requestResponseId, responseData, responseStatusEnumId, exceptionFull, exceptionName, exceptionMessage]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -892,10 +834,10 @@ class InwardServices {
         });
     }
 
-    async insertApiResponceDataService(requestResponseId:any ,responceData :any) {
+    async insertApiResponceDataService(requestResponseId: any, responceData: any) {
         let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertApiResponceDataQuery(),
-            values: [requestResponseId,responceData]
+            values: [requestResponseId, responceData]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -907,45 +849,43 @@ class InwardServices {
             }
         });
     }
-    async insertApiExceptionService(exData:any  ) {
-        let actionDate :any = getUTCdate()
+    async insertApiExceptionService(exData: any) {
+        let actionDate: any = getUTCdate();
 
-        let query: any = {            
+        let query: any = {
             text: DB_CONFIGS.inwardQueries.lockInward.insertApiExceptionDataQuery(),
             values: [
-                exData.customDBApiRequestId  ,
-                exData.exceptionFull ,
-                exData.exceptionName ,
+                exData.customDBApiRequestId,
+                exData.exceptionFull,
+                exData.exceptionName,
 
-                exData.exceptionMessage ,
-                exData.dbquery  ,
+                exData.exceptionMessage,
+                exData.dbquery,
                 exData.dbqueryParameters,
-                exData.exceptionStack ,
+                exData.exceptionStack,
 
-                exData.resolvedStatusEnumId ,
-                exData.resolvedRemarks ,
-                actionDate ,
+                exData.resolvedStatusEnumId,
+                exData.resolvedRemarks,
+                actionDate,
 
                 exData.createdbyLoginUserId,
                 exData.customError
             ]
         };
 
-
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
                 resolve(result);
-            } catch (error) {                
+            } catch (error) {
                 reject(error);
             }
         });
     }
-    
 
     async getLastRequestTimeForTime(lockInwardDetails: any) {
         let query: any = {
-            text:  DB_CONFIGS.adminQueries.adminDashboardQueries.checkLastReuestTimeForDevice(),
+            text: DB_CONFIGS.adminQueries.adminDashboardQueries.checkLastReuestTimeForDevice(),
             values: [lockInwardDetails.lockNumber]
         };
 

@@ -1,8 +1,9 @@
 import { request, Request, Response } from 'express';
+import axios from 'axios';
 import { client } from '../../Config/db.connection';
 import { exceptionHandler, validHandler } from '../../helper/responseHandler';
 import status from '../../helper/status';
-import { CustomerMobileNumbers, IAddUserDetails } from '../../model/user.model';
+import { CustomerMobileNumbers, IAddUserDetails, ISendOtpRequest } from '../../model/user.model';
 import { DB_CONFIGS } from '../../Config/db.queries';
 import logger from '../../Config/logging';
 import RequestResponse from '../../helper/responseClass';
@@ -44,7 +45,7 @@ export async function AddUserCheckCustomerMobileNumberDetail(req: Request, res: 
                             // stateName: row.state_name,
                             statusEnumId: Number(row.status_enum_id),
                             status: row.status,
-                            userTypeEnumId : Number(row.user_type_enum_id),
+                            userTypeEnumId: Number(row.user_type_enum_id),
                             usersStatus: row.users_status,
                             registrationStatus: row.registration_status
                         });
@@ -70,16 +71,47 @@ export async function AddUserCheckCustomerMobileNumberDetail(req: Request, res: 
     }
 }
 
+export async function SendOtpDetail(req: Request, res: Response) {
+    try {
+        const requestBody: ISendOtpRequest = req.body;
+        const mobileNumber = Number(requestBody?.mobile_number);
+        const otp = Number(requestBody?.otp);
+
+        if (!mobileNumber || !otp) {
+            return RequestResponse.validationError(res, apiMessage.validMobileNumber, status.error, []);
+        }
+
+        const apiKey = String(process.env.TWO_FACTOR_API_KEY || process.env.TWOFACTOR_API_KEY || '').trim();
+        const templateName = String(process.env.TWO_FACTOR_TEMPLATE || process.env.TWOFACTOR_TEMPLATE || 'eVegah+SMS').trim();
+
+        if (!apiKey) {
+            return RequestResponse.serverError(res, apiMessage.otpConfigMissing, status.error);
+        }
+
+        const normalizedTemplate = templateName.replace(/\s+/g, '+');
+        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${mobileNumber}/${otp}/${normalizedTemplate}`;
+        const response = await axios.get(url, { timeout: 15000 });
+        const responseData = response.data;
+
+        if (responseData?.Status === 'Success') {
+            return RequestResponse.success(res, apiMessage.otpSent, status.success, responseData);
+        }
+
+        return RequestResponse.validationError(res, apiMessage.otpSendFailed, status.error, responseData);
+    } catch (error: any) {
+        logger.error(error, { error_function_name: 'SendOtpDetail', error_service_url: '/SendOtp' });
+        return exceptionHandler(res, 1, error.message);
+    }
+}
+
 export async function AddGetUserDetail(req: Request, res: Response) {
     try {
         const requestBody: IAddUserDetails = req.body;
         const actionOnDate = getUTCdate();
         const userTypeEnumId = userMessage.userTypeEnumId;
-        
-        if(requestBody.emailId == '')
-        {
-            
-            requestBody.emailId ==null;
+
+        if (requestBody.emailId == '') {
+            requestBody.emailId == null;
         }
         const query: any = DB_CONFIGS.customerQueries.addUser(
             requestBody.userId,
@@ -96,14 +128,14 @@ export async function AddGetUserDetail(req: Request, res: Response) {
             requestBody.statusEnumId,
             actionOnDate
         );
-        
+
         await client
             .query(query)
             .then((cursor) => {
                 const Data: any = cursor;
 
                 let userDetails = Data[1].rows[0];
-                
+
                 let output_result: string = Data[1].rows[0].fp_output_result;
                 let userArray = [
                     {

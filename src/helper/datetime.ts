@@ -5,5 +5,4 @@ function getUTCdate() {
     return date;
 }
 
-
 export { getUTCdate };

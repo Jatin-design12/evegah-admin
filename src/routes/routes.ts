@@ -39,12 +39,11 @@ const defaultRoutes = [
         path: '/',
         route: bookingRoute
     },
-    
 
     {
         path: '/',
         route: rideEarningsRoute
-    } 
+    }
 ];
 
 defaultRoutes.forEach((route) => {

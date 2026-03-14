@@ -9,12 +9,11 @@ class RideBooking {
 
     async insertRideBooking(rideDetails: any) {
         let actionOnDate = getUTCdate();
-        rideDetails.fromRideTime =actionOnDate ;
-       // console.log('check rideend  time ',rideDetails.fromRideTime)
-        rideDetails.toRideTime = moment(rideDetails.fromRideTime).add(  rideDetails.rideBookingMinutes, 'm').toDate();
-        
+        rideDetails.fromRideTime = actionOnDate;
+        // console.log('check rideend  time ',rideDetails.fromRideTime)
+        rideDetails.toRideTime = moment(rideDetails.fromRideTime).add(rideDetails.rideBookingMinutes, 'm').toDate();
 
-       // console.log('check rideend  time ',rideDetails.toRideTime)
+        // console.log('check rideend  time ',rideDetails.toRideTime)
         let query: any = {
             text: DB_CONFIGS.rideBooking.insertRideBooking(),
             values: [
@@ -32,32 +31,30 @@ class RideBooking {
                 1,
                 rideDetails.paymentTransactionId,
                 rideDetails.rideStartLatitude,
-                rideDetails.rideStartLongitude
-                ,rideDetails.bikeId,
+                rideDetails.rideStartLongitude,
+                rideDetails.bikeId,
                 rideDetails.minimumHiringTime,
                 rideDetails.minimumRentRate,
-                rideDetails.farePlanId ,
-                rideDetails.rideStartAddress ,  
-                rideDetails.rideStartExternalBatteryVoltage ,
-                rideDetails.rideStartInternalBatteryVoltage ,
-                rideDetails.rideStartZoneId ,
+                rideDetails.farePlanId,
+                rideDetails.rideStartAddress,
+                rideDetails.rideStartExternalBatteryVoltage,
+                rideDetails.rideStartInternalBatteryVoltage,
+                rideDetails.rideStartZoneId,
                 rideDetails.rideBookingNo,
-                rideDetails.beepOnCount, 
-                rideDetails.beepOffCount, 
-                rideDetails.areaId, 
-                rideDetails.mapCityId, 
-                rideDetails.distanceInMeters ,
-                rideDetails.rideStartBatteryPercentage ,
+                rideDetails.beepOnCount,
+                rideDetails.beepOffCount,
+                rideDetails.areaId,
+                rideDetails.mapCityId,
+                rideDetails.distanceInMeters,
+                rideDetails.rideStartBatteryPercentage,
                 rideDetails.rideRating
-
             ]
         };
 
         return new Promise(async (resolve, reject) => {
             try {
-               
                 let result = await client.query(query);
-               // console.log('check inside try01 result ',result)
+                // console.log('check inside try01 result ',result)
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -65,25 +62,19 @@ class RideBooking {
         });
     }
 
-    async addRideBookingRating(rideDetails: any, req :any) {
+    async addRideBookingRating(rideDetails: any, req: any) {
         let actionOnDate = getUTCdate();
-      
-       // console.log('check rideend  time ',rideDetails.toRideTime)
+
+        // console.log('check rideend  time ',rideDetails.toRideTime)
         let query: any = {
             text: DB_CONFIGS.rideBooking.addRidebookingRating(),
-            values: [                
-                rideDetails.rideRating,                
-                rideDetails.rideComments,  
-                rideDetails.commentsReplyStatusEnumId,  
-                rideDetails.rideBookingId            
-            ]
+            values: [rideDetails.rideRating, rideDetails.rideComments, rideDetails.commentsReplyStatusEnumId, rideDetails.rideBookingId]
         };
 
         return new Promise(async (resolve, reject) => {
             try {
-               
                 let result = await client.query(query);
-               // console.log('check inside try01 result ',result)
+                // console.log('check inside try01 result ',result)
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -91,25 +82,19 @@ class RideBooking {
         });
     }
 
-    async addRidebookingCommentsReply(rideDetails: any, req :any) {
+    async addRidebookingCommentsReply(rideDetails: any, req: any) {
         let actionOnDate = getUTCdate();
-  
-       // console.log('check rideend  time ',rideDetails.toRideTime)
+
+        // console.log('check rideend  time ',rideDetails.toRideTime)
         let query: any = {
             text: DB_CONFIGS.rideBooking.addRidebookingCommentsReply(),
-            values: [                
-                rideDetails.rideCommentsReply,                
-                rideDetails.commentsReplyStatusEnumId,   
-                rideDetails.rideBookingId,   
-                rideDetails.commentsReplyDate         
-            ]
+            values: [rideDetails.rideCommentsReply, rideDetails.commentsReplyStatusEnumId, rideDetails.rideBookingId, rideDetails.commentsReplyDate]
         };
 
         return new Promise(async (resolve, reject) => {
             try {
-               
                 let result = await client.query(query);
-               // console.log('check inside try01 result ',result)
+                // console.log('check inside try01 result ',result)
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -117,28 +102,24 @@ class RideBooking {
         });
     }
 
-
-    async  getRideBookingDetailForCommentsReplyService(req :any) {
+    async getRideBookingDetailForCommentsReplyService(req: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getRideBookingDetailForCommentsReply(),
-        values:[req.body.fromDate,req.body.toDate,req.body.rideRating,req.body.commentsReplyStatusEnumId,req.body.userName,req.body.mobileNo]
+            values: [req.body.fromDate, req.body.toDate, req.body.rideRating, req.body.commentsReplyStatusEnumId, req.body.userName, req.body.mobileNo]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
                 resolve(result);
             } catch (error) {
                 req.dbquery = query.text;
-                req.dbqueryParameters =query.values ;
-                AddExceptionIntoDB(req,error);
+                req.dbqueryParameters = query.values;
+                AddExceptionIntoDB(req, error);
                 reject(error);
             }
         });
     }
-
-
 
     async addWalletAmount(rideDetails: any) {
         let actionOnDate = getUTCdate();
@@ -160,7 +141,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.getWalletAmount(),
             values: [userId.id]
         };
-      //  console.log('check amount get query',query);
+        //  console.log('check amount get query',query);
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -171,7 +152,6 @@ class RideBooking {
         });
     }
     async getPreviousChargesByUserId(rideDetails: any) {
-    
         let query: any = {
             text: DB_CONFIGS.rideBooking.previousCharges(),
             values: [rideDetails.id]
@@ -191,7 +171,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.UpdateExtraCharges(),
             values: [rideDetails.extraCharges, rideDetails.id, actionOnDate]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -203,7 +183,7 @@ class RideBooking {
     }
     async updateActualTime(rideDetails: any) {
         let actionOnDate = getUTCdate();
-       // rideDetails.actualRideTime = actionOnDate;
+        // rideDetails.actualRideTime = actionOnDate;
         let query: any = {
             text: DB_CONFIGS.rideBooking.updateActualTimeTake(),
             values: [
@@ -217,20 +197,19 @@ class RideBooking {
                 rideDetails.rideEndLongitude,
                 rideDetails.rideEndRemarks,
                 rideDetails.endRideUserId,
-                rideDetails.rideEndAddress ,
+                rideDetails.rideEndAddress,
                 rideDetails.endRideZoneId,
                 rideDetails.rideEndInternalBatteryVoltage,
-                rideDetails.rideEndExternalBatteryVoltage ,
-                rideDetails.light_off_count, 
-                rideDetails.device_lock_count ,
-                rideDetails.rideEndBatteryPercentage	
-                //rideDetails.endRideZoneId        
+                rideDetails.rideEndExternalBatteryVoltage,
+                rideDetails.light_off_count,
+                rideDetails.device_lock_count,
+                rideDetails.rideEndBatteryPercentage
+                //rideDetails.endRideZoneId
                 // rideDetails.minimumHiringTime,
                 // rideDetails.minimumRentRate,
             ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -245,7 +224,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.getRideBookingDetails(),
             values: [rideDetails.rideBookingId, rideDetails.statusEnumId, rideDetails.id]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -259,9 +238,9 @@ class RideBooking {
     async updateBikeReservedAndUnReservedStatus(rideDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.updateBikeReservedAndUnReservedStatus(),
-            values: [rideDetails.vehicleId, rideDetails.uId, rideDetails.lockId, rideDetails.reservedAndUnReservedStatus,rideDetails.endProductZoneId]
+            values: [rideDetails.vehicleId, rideDetails.uId, rideDetails.lockId, rideDetails.reservedAndUnReservedStatus, rideDetails.endProductZoneId]
         };
-    //    console.log('check updateBikeReservedAndUnReservedStatus',query)
+        //    console.log('check updateBikeReservedAndUnReservedStatus',query)
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -316,9 +295,9 @@ class RideBooking {
 
     async getWalletAmountToEnumTbl() {
         let query: any = {
-            text: DB_CONFIGS.rideBooking.getLastMinAmount()           
+            text: DB_CONFIGS.rideBooking.getLastMinAmount()
         };
-      //  console.log('check amount get query',query);
+        //  console.log('check amount get query',query);
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -331,9 +310,9 @@ class RideBooking {
 
     async getLastDepositAmount() {
         let query: any = {
-            text: DB_CONFIGS.rideBooking.getLastDepositAmount()           
+            text: DB_CONFIGS.rideBooking.getLastDepositAmount()
         };
-      //  console.log('check amount get query',query);
+        //  console.log('check amount get query',query);
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -344,13 +323,11 @@ class RideBooking {
         });
     }
 
-    
-    
     async getLastMinRechargeAmountTbl() {
         let query: any = {
-            text: DB_CONFIGS.rideBooking.getLastMinRechargeAmount()           
+            text: DB_CONFIGS.rideBooking.getLastMinRechargeAmount()
         };
-      //  console.log('check amount get query',query);
+        //  console.log('check amount get query',query);
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -360,14 +337,13 @@ class RideBooking {
             }
         });
     }
-    
 
     async getBikeDetails(bikeDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getBikeDetail(),
             values: [bikeDetails.bike]
         };
-     
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -381,9 +357,9 @@ class RideBooking {
     async getBikeOtherBikeAtSameLocke(bikeDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getBikeOtherBikeAtSameLocke(),
-            values: [bikeDetails.bikeId,bikeDetails.lockId,bikeDetails.status_enum_id]
+            values: [bikeDetails.bikeId, bikeDetails.lockId, bikeDetails.status_enum_id]
         };
-       
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -397,9 +373,9 @@ class RideBooking {
     async getBikeOtherBikeAtSameUId(bikeDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getBikeOtherBikeAtSameUId(),
-            values: [bikeDetails.bikeId,bikeDetails.uId,bikeDetails.status_enum_id]
+            values: [bikeDetails.bikeId, bikeDetails.uId, bikeDetails.status_enum_id]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -410,21 +386,16 @@ class RideBooking {
         });
     }
 
-    
-
-    
-    async findNearestZone (latlogDetail: any) {
-        
+    async findNearestZone(latlogDetail: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.findNearestZone(),
-            values: [latlogDetail.dbrideEndLatitude +' '+ latlogDetail.dbrideEndtLongitude]
+            values: [latlogDetail.dbrideEndLatitude + ' ' + latlogDetail.dbrideEndtLongitude]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
-                
                 let result = await client.query(query);
-                
+
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -437,24 +408,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.getLockDetailForRideStartQuery(),
             values: [bikeDetails.lockId]
         };
-        
-        return new Promise(async (resolve, reject) => {
-            try {
-                let result = await client.query(query);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
-       
-    
-    async getZoneForRideBooking(bikeDetails: any) {
-        let query: any = {
-            text: DB_CONFIGS.rideBooking.getZoneForRideBooking(),
-            values: [bikeDetails.modelId ,bikeDetails.uId]
-        };
-       
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -465,13 +419,28 @@ class RideBooking {
         });
     }
 
+    async getZoneForRideBooking(bikeDetails: any) {
+        let query: any = {
+            text: DB_CONFIGS.rideBooking.getZoneForRideBooking(),
+            values: [bikeDetails.modelId, bikeDetails.uId]
+        };
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
     async getAreaAndAreaType(bikeDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getAreaAndAreaType(),
             values: [bikeDetails.zoneId]
         };
-      
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -480,13 +449,13 @@ class RideBooking {
                 reject(error);
             }
         });
-    }//aplicableDate ,cityId ,areaTypeEnumId, modelId , areaId
+    } //aplicableDate ,cityId ,areaTypeEnumId, modelId , areaId
     async getFarePlanDataForRideBooking(farePlan: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getFarePlanDataForRideBookings(),
-            values: [farePlan.aplicableDate ,farePlan.cityId ,farePlan.areaTypeEnumId, farePlan.modelId , farePlan.areaId]
+            values: [farePlan.aplicableDate, farePlan.cityId, farePlan.areaTypeEnumId, farePlan.modelId, farePlan.areaId]
         };
-       
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -496,16 +465,13 @@ class RideBooking {
             }
         });
     }
-    
-    
-   
 
     async getWalletAmount(userId: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getWalletAmount(),
             values: [userId.userId]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -531,13 +497,12 @@ class RideBooking {
         });
     }
 
-
     async getRideBookingDetailsForEndRide(rideDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.getRideBookingDetailsForRideEnd(),
             values: [rideDetails.rideBookingId]
         };
-       // console.log('check current ride query getRideBookingDetails', query);
+        // console.log('check current ride query getRideBookingDetails', query);
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -548,13 +513,12 @@ class RideBooking {
         });
     }
 
-    
     async checkRideStartOrNotForUserService(rideDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.checkRideStartOrNotForUser(),
             values: [rideDetails.id]
         };
-       // console.log('check current ride query getRideBookingDetails', query);
+        // console.log('check current ride query getRideBookingDetails', query);
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -568,7 +532,7 @@ class RideBooking {
     async updateBikeUndermaintenanceStatus(rideDetails: any) {
         let query: any = {
             text: DB_CONFIGS.rideBooking.updateBikeStatusMantenances(),
-            values: [rideDetails.bikeId,rideDetails.vehicleId, rideDetails.uId, rideDetails.lockId, rideDetails.reservedAndUnReservedStatus]
+            values: [rideDetails.bikeId, rideDetails.vehicleId, rideDetails.uId, rideDetails.lockId, rideDetails.reservedAndUnReservedStatus]
         };
         return new Promise(async (resolve, reject) => {
             try {
@@ -582,7 +546,7 @@ class RideBooking {
 
     async insertBikeUnserMatenationHistory(rideDetails: any) {
         let actionOnDate = getUTCdate();
-        rideDetails.fromRideTime =actionOnDate ;
+        rideDetails.fromRideTime = actionOnDate;
 
         let query: any = {
             text: DB_CONFIGS.rideBooking.bikeUnderMantenancesHistory(),
@@ -593,17 +557,16 @@ class RideBooking {
                 rideDetails.lockId,
                 rideDetails.bikeStatusEnumId,
                 rideDetails.remarks,
-                actionOnDate ,
+                actionOnDate,
                 rideDetails.userId,
-                rideDetails.statusEnumId           
+                rideDetails.statusEnumId
             ]
         };
 
         return new Promise(async (resolve, reject) => {
             try {
-               
                 let result = await client.query(query);
-               // console.log('check inside try01 result ',result)
+                // console.log('check inside try01 result ',result)
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -612,13 +575,13 @@ class RideBooking {
     }
 
     async getLockDetailForScheduleRideStartService() {
-       // console.log('check result getLockDetailForScheduleRideStartService')
-        let statusEnumId=1;
+        // console.log('check result getLockDetailForScheduleRideStartService')
+        let statusEnumId = 1;
         let query: any = {
-            text: DB_CONFIGS.rideBooking.getLockDetailForScheduleRideStartQuery(),
-          // values: [statusEnumId]
-        };        
-       // console.log('check query', query);
+            text: DB_CONFIGS.rideBooking.getLockDetailForScheduleRideStartQuery()
+            // values: [statusEnumId]
+        };
+        // console.log('check query', query);
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -633,7 +596,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.getUserTypeEnumId(),
             values: [userId.usersId]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let userDetail = await client.query(query);
@@ -649,7 +612,7 @@ class RideBooking {
             text: DB_CONFIGS.rideBooking.getRideBookingByUserIdAndLockNumber(),
             values: [rideDetails.lockId, rideDetails.statusEnumId, rideDetails.userId]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -660,14 +623,13 @@ class RideBooking {
         });
     }
 
-    
     async updateUnlockFlagService(rideDetails: any) {
-      let actionOnDate:any =  getUTCdate();
+        let actionOnDate: any = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.rideBooking.updateUnlockFlag(),
             values: [rideDetails.rideStartUnlockFlagEnumId, actionOnDate, rideDetails.lockId]
         };
-  //     console.log('check updateBikeReservedAndUnReservedStatus',query)
+        //     console.log('check updateBikeReservedAndUnReservedStatus',query)
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -679,30 +641,21 @@ class RideBooking {
     }
 
     async updatePowerOnFlagService(rideDetails: any) {
-        let actionOnDate:any =  getUTCdate();
-          let query: any = {
-              text: DB_CONFIGS.rideBooking.updatePoweronFlag(),
-              values: [rideDetails.rideStartPowerFlagEnumId, actionOnDate, rideDetails.lockId]
-          };
-      //    console.log('check updateBikeReservedAndUnReservedStatus',query)
-          return new Promise(async (resolve, reject) => {
-              try {
-                  let result = await client.query(query);
-                  resolve(result);
-              } catch (error) {
-                  reject(error);
-              }
-          });
-      }
-
- 
-    
+        let actionOnDate: any = getUTCdate();
+        let query: any = {
+            text: DB_CONFIGS.rideBooking.updatePoweronFlag(),
+            values: [rideDetails.rideStartPowerFlagEnumId, actionOnDate, rideDetails.lockId]
+        };
+        //    console.log('check updateBikeReservedAndUnReservedStatus',query)
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 }
-
-
-
-
-
-
 
 export default new RideBooking();

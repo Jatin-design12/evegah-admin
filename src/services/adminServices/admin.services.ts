@@ -1,6 +1,6 @@
 import { request, Request, Response } from 'express';
 import { client, pool } from '../../Config/db.connection';
-import { exceptionHandler, validHandler,AddExceptionIntoDB } from '../../helper/responseHandler';
+import { exceptionHandler, validHandler, AddExceptionIntoDB } from '../../helper/responseHandler';
 
 import { ResponseStatusCode } from '../../helper/response.status.code';
 import status from '../../helper/status';
@@ -16,7 +16,6 @@ import RequestResponse from '../../helper/responseClass';
 import CommonMessage from '../../helper/common.validation';
 import bcrypt from 'bcryptjs';
 
-
 let nodemailer = require('nodemailer');
 // email transporter is now a no‑op/json transport; AWS SES support removed
 import { getUTCdate } from '../../helper/datetime';
@@ -31,12 +30,12 @@ export async function GetEnumDetail(req: Request, res: Response) {
         let getEnum: getEnumDetailsRes;
 
         const query = DB_CONFIGS.enumQueries.EnumDetail(user.Enum_type);
-        
+
         await client
             .query(query)
             .then((cursor) => {
                 const data: any = cursor;
-                
+
                 if (data[1].rows.length > 0) {
                     for (let row of data[1].rows) {
                         getEnum = row;
@@ -49,17 +48,17 @@ export async function GetEnumDetail(req: Request, res: Response) {
                 }
             })
             .catch((e) => {
-                AddExceptionIntoDB(req,e);
+                AddExceptionIntoDB(req, e);
                 return exceptionHandler(res, 1, e.message);
             });
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 } //end of api
 
 export const adminLogin = async (req: Request, res: Response) => {
-   // console.log('check api start not ')
+    // console.log('check api start not ')
     try {
         var convert_obj = JSON.stringify(req.body);
         var requestQuery = JSON.parse(convert_obj);
@@ -75,10 +74,7 @@ export const adminLogin = async (req: Request, res: Response) => {
 
             logger.info(`Login attempt: emailId=${emailId}`);
 
-            const getAdminResult = await pool.query(
-                DB_CONFIGS.adminQueries.getAdminByEmailId(),
-                [emailId]
-            );
+            const getAdminResult = await pool.query(DB_CONFIGS.adminQueries.getAdminByEmailId(), [emailId]);
 
             if (!getAdminResult.rows || getAdminResult.rows.length === 0) {
                 logger.info('Login: email not found');
@@ -129,17 +125,16 @@ export const adminLogin = async (req: Request, res: Response) => {
 export const updateAdminPassword = async (req: Request, res: Response) => {
     try {
         var requestQuery = JSON.parse(JSON.stringify(req.body));
-        
-        if (CommonMessage.IsValid(requestQuery.emailId)==false) {
+
+        if (CommonMessage.IsValid(requestQuery.emailId) == false) {
             return validHandler(res, 2);
-        }  if (CommonMessage.IsValid(requestQuery.oldPassword)==false) {
-            
+        }
+        if (CommonMessage.IsValid(requestQuery.oldPassword) == false) {
             return validHandler(res, 3);
-        } 
-      if (CommonMessage.IsValid(requestQuery.newPassword)==false) {
-        
-        return validHandler(res, 4);
-    }else {
+        }
+        if (CommonMessage.IsValid(requestQuery.newPassword) == false) {
+            return validHandler(res, 4);
+        } else {
             const query = DB_CONFIGS.adminQueries.updateAdminPassword(requestQuery.emailId, requestQuery.oldPassword, requestQuery.newPassword);
             await client
                 .query(query)
@@ -184,12 +179,12 @@ export const updateAdminPassword = async (req: Request, res: Response) => {
                     }
                 })
                 .catch((e) => {
-                    AddExceptionIntoDB(req,e);
+                    AddExceptionIntoDB(req, e);
                     return exceptionHandler(res, 1, e.message);
                 });
         }
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 }; //end of api
@@ -475,9 +470,7 @@ export const ResetpasswordEMailGeneration = async (req: Request, res: Response) 
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, function (error: any, info: any) {
                         if (error) {
-                            
                         } else {
-                            
                         }
                     });
 
@@ -485,11 +478,11 @@ export const ResetpasswordEMailGeneration = async (req: Request, res: Response) 
                 }
             })
             .catch((e) => {
-                AddExceptionIntoDB(req,e);
+                AddExceptionIntoDB(req, e);
                 return exceptionHandler(res, 1, e.message);
             });
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 };
@@ -511,20 +504,18 @@ export const updateAdminPasswordByEmail = async (req: Request, res: Response) =>
                 }
             })
             .catch((e) => {
-                AddExceptionIntoDB(req,e);
+                AddExceptionIntoDB(req, e);
                 return exceptionHandler(res, 1, e.message);
             });
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 };
 
 const addAdminAuthToken = async (id: any, token: string) => {
     try {
-        const getResult = await pool.query(
-            DB_CONFIGS.adminQueries.getAuthToken(id)
-        );
+        const getResult = await pool.query(DB_CONFIGS.adminQueries.getAuthToken(id));
         const tokenArray: Array<string> = [token];
         tokenArray.push(...(getResult.rows[0]?.admin_auth_token || []));
 
@@ -542,23 +533,16 @@ export const logOutAdmin = async (req: Request, res: Response) => {
         let requestBody = req.body;
         let query: any = DB_CONFIGS.adminQueries.getAuthToken(requestBody.id);
         result = await client.query(query);
-        let token : any ='';
+        let token: any = '';
 
         for (let i = 0; i <= result.rows[0].admin_auth_token.length; i++) {
-
-            
             if (result.rows[0].admin_auth_token[i] === req.query.access_token) {
-
                 token = result.rows[0].admin_auth_token.filter((item: any) => {
-
-             
-
                     return item !== req.query.access_token;
-                    
                 });
 
                 query = { text: DB_CONFIGS.adminQueries.addAuthToken(), values: [token, requestBody.id] };
-               
+
                 result = await client.query(query);
 
                 if (result.rowCount > 0) {
@@ -571,11 +555,10 @@ export const logOutAdmin = async (req: Request, res: Response) => {
             }
         }
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 };
-
 
 // export const insertAppVersionDetail = async (req: Request, res: Response)=>  {
 //     let requestBody=req.body ;
@@ -587,7 +570,7 @@ export const logOutAdmin = async (req: Request, res: Response) => {
 //         text: DB_CONFIGS.versionQueries.insertVersion(),
 //         values: [requestBody.newAppVersion,requestBody.appVersionName,requestBody.lastVersionUpdateDate,requestBody.versionApplyDate,requestBody.createdOnDate,requestBody.createdByLoginUserId]
 //     };
-        
+
 //     console.log('check query', query);
 //     return new Promise(async (resolve, reject) => {
 //         try {

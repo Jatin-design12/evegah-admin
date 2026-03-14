@@ -14,16 +14,15 @@ router.get('/api/v1/getLastRideBookingDetails', adminController.verifyTokenContr
 router.post('/api/v1/updateBikeUndermaintenance', adminController.verifyTokenController, bookingController.updateBikeUndermaintenanceController);
 router.post('/api/v1/updateBikeStatusUnresurved', adminController.verifyTokenController, bookingController.updateBikeStatusUnresurvedController);
 
-
 router.post('/api/v1/rideBookingValidations', adminController.verifyTokenController, bookingController.rideBookingValidationsControllerForCheckFarePlan);
 
 //router.post('/api/v1/checkgoogleMapsClient', bookingController.checkgoogleMapsClient);
 
-router.get('/getRideBookingByUserIdAndLockNo',adminController.verifyTokenController, bookingController.getRideBookingByUserIdAndLockNumber);
-router.post('/addRideBookingRating',adminController.verifyTokenController, bookingController.addRideBookingRatingController);
-router.post('/addRidebookingCommentsReply',adminController.verifyTokenController, bookingController.addRidebookingCommentsReply);
+router.get('/getRideBookingByUserIdAndLockNo', adminController.verifyTokenController, bookingController.getRideBookingByUserIdAndLockNumber);
+router.post('/addRideBookingRating', adminController.verifyTokenController, bookingController.addRideBookingRatingController);
+router.post('/addRidebookingCommentsReply', adminController.verifyTokenController, bookingController.addRidebookingCommentsReply);
 
-router.post('/getRideBookingDetailForCommentsReply', adminController.verifyTokenController,bookingController.getRideBookingDetailForCommentsReply);
+router.post('/getRideBookingDetailForCommentsReply', adminController.verifyTokenController, bookingController.getRideBookingDetailForCommentsReply);
 
 router.post('/rideStartUnlockAndPowerOnWithTimeDifference', bookingController.rideStartWithTime);
 

@@ -29,7 +29,6 @@ class MasterServices {
         });
     }
 
-
     async getUnit(data: any) {
         let query: any = {
             text: DB_CONFIGS.enumQueries.getUnitDetails(),
@@ -49,7 +48,7 @@ class MasterServices {
             text: DB_CONFIGS.enumQueries.getVehicleModelDetails(),
             values: [data.VehicleId, data.statusEnumId]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -59,9 +58,7 @@ class MasterServices {
             }
         });
     }
-    
 
-   
     async addUpdateVehicleModel(data: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
@@ -138,27 +135,23 @@ class MasterServices {
             }
             let finalResult: any = [];
             vehicleDetails.vehicleImage.forEach(async (element: any) => {
+                let query: any = {
+                    text: DB_CONFIGS.enumQueries.addVehicleImage(),
+                    values: [
+                        vehicleDetails.vehicleId,
+                        element.image_name,
+                        element.image_unique_name,
 
-                
-                    let query: any = {
+                        vehicleDetails.statusEnumId,
+                        actionOnDate,
+                        vehicleDetails.actionByLoginUserId,
 
-                        text: DB_CONFIGS.enumQueries.addVehicleImage(),
-                        values: [
+                        vehicleDetails.actionByUserTypeEnumId,
+                        element.imageSerialNumber,
+                        element.imageFor
+                    ]
+                };
 
-                            vehicleDetails.vehicleId,
-                            element.image_name,
-                            element.image_unique_name,
-                            
-                            vehicleDetails.statusEnumId,
-                            actionOnDate,
-                            vehicleDetails.actionByLoginUserId,
-    
-                            vehicleDetails.actionByUserTypeEnumId,
-                            element.imageSerialNumber,
-                            element.imageFor,
-                        ]
-                    };
-                                                                             
                 try {
                     let result = await client.query(query);
                     finalResult.push(result);
@@ -170,27 +163,25 @@ class MasterServices {
         });
     }
 
-    async updateVehicleImages(imageDetails: any,vehicleDetails :any) {
-      
+    async updateVehicleImages(imageDetails: any, vehicleDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.enumQueries.updateVehicleImage(),
-            values: [ 
-                imageDetails.imageId,                
+            values: [
+                imageDetails.imageId,
                 vehicleDetails.vehicleId,
                 imageDetails.image_name,
                 imageDetails.image_unique_name,
-                
+
                 vehicleDetails.statusEnumId,
                 actionOnDate,
                 vehicleDetails.actionByLoginUserId,
-                
+
                 imageDetails.imageSerialNumber,
                 imageDetails.imageFor
             ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -201,24 +192,24 @@ class MasterServices {
         });
     }
 
-    async insertVehicleImages(imageDetails: any ,vehicleDetails :any) {
+    async insertVehicleImages(imageDetails: any, vehicleDetails: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.enumQueries.addVehicleImage(),
-            values: [                 
+            values: [
                 vehicleDetails.vehicleId,
                 imageDetails.image_name,
                 imageDetails.image_unique_name,
-                
+
                 vehicleDetails.statusEnumId,
                 actionOnDate,
                 vehicleDetails.actionByLoginUserId,
-                
+
                 imageDetails.imageSerialNumber,
                 imageDetails.imageFor
             ]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -244,9 +235,6 @@ class MasterServices {
         });
     }
 
-
-
-
     async deleteUnUsedImageOfVehicle(vehicleDetails: any) {
         let query: any = {
             text: DB_CONFIGS.enumQueries.deleteUnUsedImageOFVehicleByVehicleId(),
@@ -271,7 +259,7 @@ class MasterServices {
             try {
                 let imageArray: any = [];
                 let result: any = await client.query(query);
-                for (let row of result.rows) {                                       
+                for (let row of result.rows) {
                     imageArray.push({
                         id: row.id,
                         vehicleId: row.vehicle_id,
@@ -279,8 +267,8 @@ class MasterServices {
                         image_unique_name: row.image_unique_name,
                         image_unique_signed_url: gets3SignedUrls(row.image_unique_name),
                         status_enum_id: row.status_enum_id,
-                        imageSerialNumber:row.image_serial_number,
-                        image_for : row.image_for,
+                        imageSerialNumber: row.image_serial_number,
+                        image_for: row.image_for
                     });
                 }
                 resolve(imageArray);
@@ -299,49 +287,41 @@ class MasterServices {
             try {
                 let imageArray: any;
                 let MobileImageArray: any = [];
-                let AdminImageArray: any =[];
+                let AdminImageArray: any = [];
                 let result: any = await client.query(query);
                 for (let row of result.rows) {
-                    
-                    
-                    if(row.image_for ==79)// mobole
+                    if (row.image_for == 79) // mobole
                     {
-                        
                         MobileImageArray.push({
                             id: row.id,
-                            imageId : row.id,
+                            imageId: row.id,
                             vehicleId: row.vehicle_id,
                             image_name: row.image_name,
                             image_unique_name: row.image_unique_name,
                             image_unique_signed_url: gets3SignedUrls(row.image_unique_name),
                             status_enum_id: row.status_enum_id,
-                            imageSerialNumber:row.image_serial_number,
-                            image_for : row.image_for,
+                            imageSerialNumber: row.image_serial_number,
+                            image_for: row.image_for
+                        });
+                    } else if (row.image_for == 78) {
+                        AdminImageArray.push({
+                            id: row.id,
+                            imageId: row.id,
+                            vehicleId: row.vehicle_id,
+                            image_name: row.image_name,
+                            image_unique_name: row.image_unique_name,
+                            image_unique_signed_url: gets3SignedUrls(row.image_unique_name),
+                            status_enum_id: row.status_enum_id,
+                            imageSerialNumber: row.image_serial_number,
+                            image_for: row.image_for
                         });
                     }
-                    else if (row.image_for == 78)
-                    {
-                        
-                        AdminImageArray.push({
-                            
-                            id: row.id,
-                            imageId : row.id,
-                            vehicleId: row.vehicle_id,
-                            image_name: row.image_name,
-                            image_unique_name: row.image_unique_name,
-                            image_unique_signed_url: gets3SignedUrls(row.image_unique_name),
-                            status_enum_id: row.status_enum_id,
-                            imageSerialNumber:row.image_serial_number,
-                            image_for : row.image_for,
-                        });
-                    }                                                                    
-                    
                 }
-                imageArray ={
-                    mobileImageArray : MobileImageArray,
-                    adminImageArray : AdminImageArray
-                   }
-                
+                imageArray = {
+                    mobileImageArray: MobileImageArray,
+                    adminImageArray: AdminImageArray
+                };
+
                 resolve(imageArray);
             } catch (error) {
                 reject(error);
@@ -349,13 +329,12 @@ class MasterServices {
         });
     }
 
-
     async getImagesBase64Service(data: any) {
         let query: any = {
-            text: DB_CONFIGS.enumQueries.getImageBase64Q(),   
-            values: [data.imageId]         
+            text: DB_CONFIGS.enumQueries.getImageBase64Q(),
+            values: [data.imageId]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -365,12 +344,12 @@ class MasterServices {
             }
         });
     }
-    
+
     async getVehicleTypeList(data: any) {
         let query: any = {
-            text: DB_CONFIGS.areaMasters.getVehicleTypeList()            
+            text: DB_CONFIGS.areaMasters.getVehicleTypeList()
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -381,10 +360,10 @@ class MasterServices {
         });
     }
 
-    async getMapCity(mapStateId : any ) {
+    async getMapCity(mapStateId: any) {
         let query: any = {
             text: DB_CONFIGS.mapAddressQueries.getMapCity(),
-            values: [mapStateId.mapStateId]           
+            values: [mapStateId.mapStateId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -396,12 +375,11 @@ class MasterServices {
             }
         });
     }
-    
 
-    async getMapState(mapCountryId : any ) {
+    async getMapState(mapCountryId: any) {
         let query: any = {
             text: DB_CONFIGS.mapAddressQueries.getMapStates(),
-            values: [mapCountryId.mapCountryId]           
+            values: [mapCountryId.mapCountryId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -417,7 +395,7 @@ class MasterServices {
     async getMapCountry() {
         let query: any = {
             text: DB_CONFIGS.mapAddressQueries.getmapCountry()
-            //values: [mapCountryId.mapCountryId]           
+            //values: [mapCountryId.mapCountryId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -430,39 +408,35 @@ class MasterServices {
         });
     }
 
-
     async insertVehicleModel(data: any) {
         let actionOnDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.enumQueries.insertVehicleModelQuery(),
             values: [
-
-                
                 data.modelName,
-                data.brandName ,            
-           
+                data.brandName,
+
                 data.vehicleType,
-                data.brakeType ,
+                data.brakeType,
                 data.batteryType,
-            
-                data.frameType ,
-                data.batteryCapacityAh ,
+
+                data.frameType,
+                data.batteryCapacityAh,
                 data.batteryCapacityVolt,
 
-                data.accessories,           
+                data.accessories,
                 data.color,
-                data.motorType ,
+                data.motorType,
 
                 data.statusEnumId,
                 data.remark,
-                
-                data.actionByLoginUserId,                
-                actionOnDate   ,
-                data.maxRangeOn100PercentageBatteryKM           
+
+                data.actionByLoginUserId,
+                actionOnDate,
+                data.maxRangeOn100PercentageBatteryKM
             ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -478,33 +452,31 @@ class MasterServices {
         let query: any = {
             text: DB_CONFIGS.enumQueries.updateVehicleModelQuery(),
             values: [
-
                 data.vehicleId,
                 data.modelName,
-                data.brandName ,                
-           
+                data.brandName,
+
                 data.vehicleType,
-                data.brakeType ,
+                data.brakeType,
                 data.batteryType,
-            
-                data.frameType ,
-                data.batteryCapacityAh ,
+
+                data.frameType,
+                data.batteryCapacityAh,
                 data.batteryCapacityVolt,
 
                 data.accessories,
-           
+
                 data.color,
                 data.motorType,
                 data.statusEnumId,
                 data.remark,
-                
-                data.actionByLoginUserId,                
-                actionOnDate  ,
-                data.maxRangeOn100PercentageBatteryKM             
+
+                data.actionByLoginUserId,
+                actionOnDate,
+                data.maxRangeOn100PercentageBatteryKM
             ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -514,18 +486,16 @@ class MasterServices {
             }
         });
     }
-     async getVehicleModelService(modelDetail: any, req :any) {
-        let query: any = { text: DB_CONFIGS.enumQueries.getVehicleModel(), values: [modelDetail.vehicleId,modelDetail.statusEnumId] };
+    async getVehicleModelService(modelDetail: any, req: any) {
+        let query: any = { text: DB_CONFIGS.enumQueries.getVehicleModel(), values: [modelDetail.vehicleId, modelDetail.statusEnumId] };
         return new Promise(async (resolve, reject) => {
             try {
-               
                 let result = await client.query(query);
                 resolve(result);
-                
             } catch (error) {
                 req.dbquery = query.text;
-                req.dbqueryParameters =query.values ;
-                AddExceptionIntoDB(req,error);
+                req.dbqueryParameters = query.values;
+                AddExceptionIntoDB(req, error);
                 reject(error);
             }
         });
@@ -534,9 +504,8 @@ class MasterServices {
     async checkExistVehicleModel(details: any) {
         let query: any = {
             text: DB_CONFIGS.enumQueries.checkExistVehicleModelQuery(),
-            values: [details.modelName,details.vehicleId]           
+            values: [details.modelName, details.vehicleId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -548,14 +517,12 @@ class MasterServices {
         });
     }
 
-
-    async checkSectionQuestions(details: any ,req :any) {
+    async checkSectionQuestions(details: any, req: any) {
         let requestBody = details;
         let query: any = {
             text: DB_CONFIGS.mastersQueries.checkSectionQuestionExist(),
-            values: [requestBody.question,requestBody.questionId ,requestBody.sectionId]           
+            values: [requestBody.question, requestBody.questionId, requestBody.sectionId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -567,13 +534,12 @@ class MasterServices {
         });
     }
 
-    async getpublisheAndUnPublishDateService(details: any ,req :any) {
+    async getpublisheAndUnPublishDateService(details: any, req: any) {
         let requestBody = details;
         let query: any = {
             text: DB_CONFIGS.mastersQueries.getpublisheAndUnPublishDateQuery(),
-            values: [requestBody.questionId]           
+            values: [requestBody.questionId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -584,14 +550,13 @@ class MasterServices {
             }
         });
     }
-    
-    async checkSectionName(details: any, req :any) {
-        let requestBody:any = details;
+
+    async checkSectionName(details: any, req: any) {
+        let requestBody: any = details;
         let query: any = {
             text: DB_CONFIGS.mastersQueries.checkSetionNameExist(),
-            values: [requestBody.sectionName ,requestBody.sectionId]           
+            values: [requestBody.sectionName, requestBody.sectionId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -602,16 +567,15 @@ class MasterServices {
             }
         });
     }
-    
-    async addSectionName(details: any,req :any) {
+
+    async addSectionName(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.addSectionName(),
-            values: [requestBody.sectionName ,requestBody.statusEnumId,requestBody.aplicableDate,requestBody.loginUserId,requestBody.scection_sequence]           
+            values: [requestBody.sectionName, requestBody.statusEnumId, requestBody.aplicableDate, requestBody.loginUserId, requestBody.scection_sequence]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -623,16 +587,14 @@ class MasterServices {
         });
     }
 
-        
-    async updateSectionNameService(details: any,req :any) {
+    async updateSectionNameService(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.updateSectionName(),
-            values: [requestBody.sectionId,requestBody.sectionName ,requestBody.statusEnumId,requestBody.aplicableDate,requestBody.loginUserId]           
+            values: [requestBody.sectionId, requestBody.sectionName, requestBody.statusEnumId, requestBody.aplicableDate, requestBody.loginUserId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -644,16 +606,27 @@ class MasterServices {
         });
     }
 
-    async addSectionFAQDetail(details: any,req :any) {
+    async addSectionFAQDetail(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.addFAQDetail(),
-            values: [requestBody.question,requestBody.answer,requestBody.faqPublishStatusEnumId,requestBody.sectionId,requestBody.statusEnumId,requestBody.aplicableDate,requestBody.loginUserId,
-                requestBody.lastPublishDate ,requestBody.lastUnpublishDate,requestBody.lastPublishedUserId,requestBody.lastUnpublishedUserId,requestBody.question_sequence]           
+            values: [
+                requestBody.question,
+                requestBody.answer,
+                requestBody.faqPublishStatusEnumId,
+                requestBody.sectionId,
+                requestBody.statusEnumId,
+                requestBody.aplicableDate,
+                requestBody.loginUserId,
+                requestBody.lastPublishDate,
+                requestBody.lastUnpublishDate,
+                requestBody.lastPublishedUserId,
+                requestBody.lastUnpublishedUserId,
+                requestBody.question_sequence
+            ]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -665,13 +638,13 @@ class MasterServices {
         });
     }
 
-    async getFAQSequence(details: any,req :any) {
+    async getFAQSequence(details: any, req: any) {
         let requestBody = details;
-      
+
         let query: any = {
             text: DB_CONFIGS.mastersQueries.addFAQSequenceDetail(),
-            values: [requestBody.sectionId]           
-        };    
+            values: [requestBody.sectionId]
+        };
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -681,12 +654,11 @@ class MasterServices {
             }
         });
     }
-    async getSectionSequence(req :any) {      
-      
+    async getSectionSequence(req: any) {
         let query: any = {
             text: DB_CONFIGS.mastersQueries.getSectionSequenceDetail()
-           // values: [requestBody.sectionId]           
-        };    
+            // values: [requestBody.sectionId]
+        };
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -696,18 +668,28 @@ class MasterServices {
             }
         });
     }
-    
 
-    async editSectionFAQDetail(details: any,req :any) {
+    async editSectionFAQDetail(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.editFAQDetail(),
-            values: [requestBody.questionId,requestBody.question,requestBody.answer,requestBody.faqPublishStatusEnumId,requestBody.sectionId,requestBody.statusEnumId,requestBody.aplicableDate,requestBody.loginUserId,
-                requestBody.lastPublishDate ,requestBody.lastUnpublishDate,requestBody.lastPublishedUserId,requestBody.lastUnpublishedUserId]     
+            values: [
+                requestBody.questionId,
+                requestBody.question,
+                requestBody.answer,
+                requestBody.faqPublishStatusEnumId,
+                requestBody.sectionId,
+                requestBody.statusEnumId,
+                requestBody.aplicableDate,
+                requestBody.loginUserId,
+                requestBody.lastPublishDate,
+                requestBody.lastUnpublishDate,
+                requestBody.lastPublishedUserId,
+                requestBody.lastUnpublishedUserId
+            ]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -719,15 +701,14 @@ class MasterServices {
         });
     }
 
-    async updateSequenceFAQ(details: any,req :any) {
+    async updateSequenceFAQ(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.updateSequenseFAQ(),
-            values: [requestBody.questionId,requestBody.questionSequence ,requestBody.aplicableDate,requestBody.loginUserId]     
+            values: [requestBody.questionId, requestBody.questionSequence, requestBody.aplicableDate, requestBody.loginUserId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -738,15 +719,14 @@ class MasterServices {
             }
         });
     }
-    async updateSequenseSectionService(details: any,req :any) {
+    async updateSequenseSectionService(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.updateSequenseSection(),
-            values: [requestBody.sectionId,requestBody.sectionSequence ,requestBody.aplicableDate,requestBody.loginUserId]     
+            values: [requestBody.sectionId, requestBody.sectionSequence, requestBody.aplicableDate, requestBody.loginUserId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -758,19 +738,23 @@ class MasterServices {
         });
     }
 
-
-
-    
-    async publishUnPublishFAQDetailService(details: any,req :any) {
+    async publishUnPublishFAQDetailService(details: any, req: any) {
         let requestBody = details;
         requestBody.statusEnumId = '1';
-        requestBody.aplicableDate = getUTCdate()
+        requestBody.aplicableDate = getUTCdate();
         let query: any = {
             text: DB_CONFIGS.mastersQueries.publishUnpublishFAQDetail(),
-            values: [requestBody.questionId,requestBody.faqPublishStatusEnumId,requestBody.aplicableDate,requestBody.loginUserId,
-                requestBody.lastPublishDate ,requestBody.lastUnpublishDate,requestBody.lastPublishedUserId,requestBody.lastUnpublishedUserId]           
+            values: [
+                requestBody.questionId,
+                requestBody.faqPublishStatusEnumId,
+                requestBody.aplicableDate,
+                requestBody.loginUserId,
+                requestBody.lastPublishDate,
+                requestBody.lastUnpublishDate,
+                requestBody.lastPublishedUserId,
+                requestBody.lastUnpublishedUserId
+            ]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -782,13 +766,12 @@ class MasterServices {
         });
     }
 
-    async getSectionDetail(details: any, req :any) {
-        let requestBody:any = details;
+    async getSectionDetail(details: any, req: any) {
+        let requestBody: any = details;
         let query: any = {
             text: DB_CONFIGS.mastersQueries.getSectionList(),
-            values: [requestBody.sectionId]           
+            values: [requestBody.sectionId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -799,47 +782,41 @@ class MasterServices {
             }
         });
     }
-    
 
-    async getFAQList( requestQuery :any , req:any) {
-        let query: any = { text: DB_CONFIGS.mastersQueries.getFAQListQuery(),
-            values: [requestQuery.questionId,requestQuery.sectionId,requestQuery.faqPublishStatusEnumId] };
-             
+    async getFAQList(requestQuery: any, req: any) {
+        let query: any = { text: DB_CONFIGS.mastersQueries.getFAQListQuery(), values: [requestQuery.questionId, requestQuery.sectionId, requestQuery.faqPublishStatusEnumId] };
+
         return new Promise<string>(async (resolve, reject) => {
             try {
-                let questionData: any = [];                
+                let questionData: any = [];
                 let result: any = await client.query(query);
                 for (let row of result.rows) {
                     questionData.push({
-                    id : row.id,
-                    questionId : row.id,
-                    question : row.question,
-                    answer : row.answer,
-                    faqPublishStatusEnumId : row.faq_publish_status_enum_id,
-                    faqPublishStatusEnumName : row.faq_publish_status_enum_name,
-                    sectionId : row.section_id,
-                    statusEnumId : row.status_enum_id,
-                    sectionName : row.section_name,
-                    createdonDate : row.createdon_date,
-                    lastPublishDate : row.last_publish_date,
-                    lastUnpublishDate  : row.last_unpublish_date,
-                    questionSequence : row.question_sequence ,
-                    sectionSequence  : row.section_sequence
+                        id: row.id,
+                        questionId: row.id,
+                        question: row.question,
+                        answer: row.answer,
+                        faqPublishStatusEnumId: row.faq_publish_status_enum_id,
+                        faqPublishStatusEnumName: row.faq_publish_status_enum_name,
+                        sectionId: row.section_id,
+                        statusEnumId: row.status_enum_id,
+                        sectionName: row.section_name,
+                        createdonDate: row.createdon_date,
+                        lastPublishDate: row.last_publish_date,
+                        lastUnpublishDate: row.last_unpublish_date,
+                        questionSequence: row.question_sequence,
+                        sectionSequence: row.section_sequence
                     });
                 }
                 resolve(questionData);
             } catch (error) {
                 req.dbquery = query.text;
-                req.dbqueryParameters =query.values ;
-                AddExceptionIntoDB(req,error);
+                req.dbqueryParameters = query.values;
+                AddExceptionIntoDB(req, error);
                 reject(error);
             }
         });
     }
-
 }
-
-
-
 
 export default new MasterServices();

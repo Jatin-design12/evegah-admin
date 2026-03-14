@@ -2,6 +2,11 @@ interface CustomerMobileNumbers {
     mobile_number: number;
     status_enum_id: number;
 }
+
+interface ISendOtpRequest {
+    mobile_number: number;
+    otp: number;
+}
 interface IAddUserDetails {
     address: string;
     whatsappno: string;
@@ -74,4 +79,4 @@ interface IAddUpdateDocument {
     actionOnDate: string;
     documentDetail: string;
 }
-export { CustomerMobileNumbers, IAddUserDetails, ISetCreditLimitForPartner, IAddInfoBusinessToBusinessUser, IAddUpdateMembership, IAddUpdateDocument };
+export { CustomerMobileNumbers, ISendOtpRequest, IAddUserDetails, ISetCreditLimitForPartner, IAddInfoBusinessToBusinessUser, IAddUpdateMembership, IAddUpdateDocument };

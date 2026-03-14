@@ -23,12 +23,11 @@ class AddLog {
                 deviceDetails.createdByLoginUserId,
                 deviceDetails.createdByUserTypeEnumId,
                 deviceDetails.rideBookingId,
-                deviceDetails.device_lock_unlock_communication_enum_id ,
+                deviceDetails.device_lock_unlock_communication_enum_id,
                 deviceDetails.remarks
             ]
         };
-        
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -39,27 +38,26 @@ class AddLog {
         });
     }
 
-
     addInstructionPowerOnOffLog(deviceDetails: any) {
         let actionOnDate = getUTCdate();
 
         let query: any = {
             text: DB_CONFIGS.deviceInformationLog.addInstructionPowerOnOffLogQ(),
             values: [
-                deviceDetails.lockId,               
+                deviceDetails.lockId,
                 deviceDetails.powerOnOffStatusEnumId,
                 deviceDetails.powerInstructionEnumId,
 
                 deviceDetails.statusEnumId,
                 deviceDetails.actionRemarks,
                 actionOnDate,
-                
-                deviceDetails.createdByLoginUserId,                
-                deviceDetails.rideBookingId,   
-                deviceDetails.remarks             
+
+                deviceDetails.createdByLoginUserId,
+                deviceDetails.rideBookingId,
+                deviceDetails.remarks
             ]
         };
-        
+
         //console.log('check qyery' ,query)
         return new Promise(async (resolve, reject) => {
             try {
@@ -155,7 +153,7 @@ class AddLog {
                 deviceDetails?.long,
                 deviceDetails?.alt,
                 deviceDetails?.sp,
-                deviceDetails?.pebv,// check krna h battery par ebvp
+                deviceDetails?.pebv, // check krna h battery par ebvp
                 deviceDetails?.ibv,
                 deviceDetails?.ebv,
                 deviceDetails?.latitudeDb,
@@ -164,7 +162,7 @@ class AddLog {
                 deviceDetails?.rideBookingId
             ]
         };
-        
+
         //console.log('check distance ')
         return new Promise(async (resolve, reject) => {
             try {
@@ -179,11 +177,16 @@ class AddLog {
     async insertDeviceLightInstrusctions(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.insertDeviceLightInstructionsQuery(),
-            values: [deviceDetails.lockId, deviceDetails.rideBookingId,deviceDetails.instructionDeviceLightInstructionEnumId,
-                deviceDetails.statusEnumId,deviceDetails.createdonDate,deviceDetails.userId]
+            values: [
+                deviceDetails.lockId,
+                deviceDetails.rideBookingId,
+                deviceDetails.instructionDeviceLightInstructionEnumId,
+                deviceDetails.statusEnumId,
+                deviceDetails.createdonDate,
+                deviceDetails.userId
+            ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -194,44 +197,44 @@ class AddLog {
         });
     }
 
-
     async addDeviceLightInformationslog(deviceDetails: any) {
-        let createdonDate :any = getUTCdate();
-     //   console.log('deviceDetails.userId',deviceDetails.userId)
+        let createdonDate: any = getUTCdate();
+        //   console.log('deviceDetails.userId',deviceDetails.userId)
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addDeviceLightInformationslogQuery(),
-            values: [deviceDetails.lockId,
-                deviceDetails.deviceId, 
+            values: [
+                deviceDetails.lockId,
+                deviceDetails.deviceId,
                 deviceDetails.rideBookingId,
-                deviceDetails.deviceLightStatusEnumId ,
-                deviceDetails.deviceLightInstructionEnumId,                
+                deviceDetails.deviceLightStatusEnumId,
+                deviceDetails.deviceLightInstructionEnumId,
                 deviceDetails.statusEnumId,
                 deviceDetails.remarks,
                 createdonDate,
                 deviceDetails.userId,
-                deviceDetails.instructionId ,
+                deviceDetails.instructionId,
                 deviceDetails.deviceLockAndUnlockStatus,
 
-                deviceDetails.beepInstructionEnumIdLog ,
+                deviceDetails.beepInstructionEnumIdLog,
                 deviceDetails.beepStatusEnumId,
-                deviceDetails.latitude ,
+                deviceDetails.latitude,
                 deviceDetails.longitude,
                 deviceDetails.mapCityId,
-                deviceDetails.areaId ,
-                deviceDetails.device_lock_unlock_communication_enum_id ,
-                deviceDetails.powerOnOffStatusEnumId ,
-                deviceDetails.powerInstructionEnumId ,
-                deviceDetails.actionRemarks ,
+                deviceDetails.areaId,
+                deviceDetails.device_lock_unlock_communication_enum_id,
+                deviceDetails.powerOnOffStatusEnumId,
+                deviceDetails.powerInstructionEnumId,
+                deviceDetails.actionRemarks,
 
                 deviceDetails?.latitudeDb,
                 deviceDetails?.longitudeDb,
-                deviceDetails?.distanceInMeters,
-              //  deviceDetails?.distanceInMeters
+                deviceDetails?.distanceInMeters
+                //  deviceDetails?.distanceInMeters
             ]
         };
 
-   //    console.log('check error for addDeviceLightInformationslog', query);
-        
+        //    console.log('check error for addDeviceLightInformationslog', query);
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -247,7 +250,6 @@ class AddLog {
             values: [deviceDetails.lockId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -257,14 +259,13 @@ class AddLog {
             }
         });
     }
-
 
     async getLockUnLockCommodsService(dbLockUnlockCommondid: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.getLockUnLockCommods(),
             values: [dbLockUnlockCommondid]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -274,15 +275,13 @@ class AddLog {
             }
         });
     }
-
 
     async updateAreaCityInLockDetail(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.updateAreaCityInLockDetail(),
-            values: [deviceDetails.area_id,deviceDetails.map_city_id,deviceDetails.lockId]
+            values: [deviceDetails.area_id, deviceDetails.map_city_id, deviceDetails.lockId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -292,16 +291,13 @@ class AddLog {
             }
         });
     }
-    
-    
 
     async addDeviceLockCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addDeviceLockCountQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -311,15 +307,13 @@ class AddLog {
             }
         });
     }
-
 
     async addDeviceUnLockCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addDeviceUnLockCounttQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -330,15 +324,12 @@ class AddLog {
         });
     }
 
-
-    
     async addLightOffCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addLightOffCountQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -348,14 +339,13 @@ class AddLog {
             }
         });
     }
-    
+
     async addLightOnCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addLightOnCountQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -367,11 +357,10 @@ class AddLog {
     }
     async getLockStatusService() {
         let query: any = {
-            text: DB_CONFIGS.adminQueries.adminDashboardQueries.getLockStatus(),
-           // values: [deviceDetails.deviceId]
+            text: DB_CONFIGS.adminQueries.adminDashboardQueries.getLockStatus()
+            // values: [deviceDetails.deviceId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -382,13 +371,12 @@ class AddLog {
         });
     }
 
-    async getLockIdByLockNumberService(deviceDetails:any ) {
+    async getLockIdByLockNumberService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.getLockIdByLockNumber(),
             values: [deviceDetails.deviceId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -399,9 +387,7 @@ class AddLog {
         });
     }
 
-
-
-    async deviceLogInfoReport(deviceDetails:any ) {
+    async deviceLogInfoReport(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.deviceLogInfoReports.LogInfoReportsQuery(),
             values: [
@@ -410,26 +396,24 @@ class AddLog {
                 deviceDetails.toDate,
                 deviceDetails.speed,
 
-                deviceDetails.latitude ,
-                deviceDetails.longitude ,
-                deviceDetails.battery ,
-                
-                deviceDetails.internal_batt_v ,
-                deviceDetails.external_batt_v ,
-                deviceDetails.altitude ,   
+                deviceDetails.latitude,
+                deviceDetails.longitude,
+                deviceDetails.battery,
+
+                deviceDetails.internal_batt_v,
+                deviceDetails.external_batt_v,
+                deviceDetails.altitude,
                 deviceDetails.deviceLightStatusEnumId,
-                deviceDetails.deviceLightInstructionEnumId ,
+                deviceDetails.deviceLightInstructionEnumId,
                 deviceDetails.instructionId,
-                deviceDetails.deviceLockAndUnlockStatus ,
+                deviceDetails.deviceLockAndUnlockStatus,
                 deviceDetails.beepInstructionEnumId,
                 deviceDetails.beepStatusEnumId,
-                deviceDetails.powerOnOffStatusEnumId,                
-                
+                deviceDetails.powerOnOffStatusEnumId
             ]
         };
 
-        
-     //   console.log('check query', query)
+        //   console.log('check query', query)
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -439,17 +423,24 @@ class AddLog {
             }
         });
     }
-
 
     async insertBeepInstrusctions(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.insertBeepInstructionsQuery(),
-            values: [deviceDetails.lockId, deviceDetails.rideBookingId,deviceDetails.beepInstructionEnumId,
-                deviceDetails.statusEnumId,deviceDetails.createdonDate,deviceDetails.userId,deviceDetails.latitude ,
-                deviceDetails.longitude, deviceDetails.mapCityId,deviceDetails.areaId ]
+            values: [
+                deviceDetails.lockId,
+                deviceDetails.rideBookingId,
+                deviceDetails.beepInstructionEnumId,
+                deviceDetails.statusEnumId,
+                deviceDetails.createdonDate,
+                deviceDetails.userId,
+                deviceDetails.latitude,
+                deviceDetails.longitude,
+                deviceDetails.mapCityId,
+                deviceDetails.areaId
+            ]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -459,14 +450,13 @@ class AddLog {
             }
         });
     }
- 
+
     async addBeepOffCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addBeepOffCountQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -476,14 +466,13 @@ class AddLog {
             }
         });
     }
-    
+
     async addBeepOnCountService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addBeepOnCountQuery(),
-            values: [deviceDetails.counts,deviceDetails.rideBookingId]
+            values: [deviceDetails.counts, deviceDetails.rideBookingId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -494,13 +483,12 @@ class AddLog {
         });
     }
 
-    async getBikeStatusAndZoneService(deviceDetails:any ) {
+    async getBikeStatusAndZoneService(deviceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.getBikeStatusAndZone(),
             values: [deviceDetails.lockId]
         };
 
-        
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -511,15 +499,12 @@ class AddLog {
         });
     }
 
-
-    
-    async addRidebookingBeepOnLatLogJson(latLongJsonData: any,rideBookingId :any ,areaId : any, mapCityId :any ) {
+    async addRidebookingBeepOnLatLogJson(latLongJsonData: any, rideBookingId: any, areaId: any, mapCityId: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addRidebookingBeepOnLatLogJsonQ(),
-            values: [latLongJsonData,rideBookingId,areaId,mapCityId]
+            values: [latLongJsonData, rideBookingId, areaId, mapCityId]
         };
-        
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -530,14 +515,12 @@ class AddLog {
         });
     }
 
-    
-    async addRidebookingBeepOffLatLogJson(latLongJsonData: any,rideBookingId :any) {
+    async addRidebookingBeepOffLatLogJson(latLongJsonData: any, rideBookingId: any) {
         let query: any = {
             text: DB_CONFIGS.adminQueries.adminDashboardQueries.addRidebookingBeepOffLatLogJsonQ(),
-            values: [latLongJsonData,rideBookingId]
+            values: [latLongJsonData, rideBookingId]
         };
-        
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -547,13 +530,13 @@ class AddLog {
             }
         });
     }
-    
-    async getUserForDipositRechargeList(requestBody :any) {
+
+    async getUserForDipositRechargeList(requestBody: any) {
         let query: any = {
             text: DB_CONFIGS.customerQueries.getUserForDipositRechargeList(),
-            values: [requestBody.userName,requestBody.mobile]
+            values: [requestBody.userName, requestBody.mobile]
         };
-       
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -563,7 +546,6 @@ class AddLog {
             }
         });
     }
- 
 }
 
 export default new AddLog();

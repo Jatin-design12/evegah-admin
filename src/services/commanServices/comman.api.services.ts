@@ -8,7 +8,7 @@ import { UploadedFile } from 'express-fileupload';
 import RequestResponse from '../../helper/responseClass';
 import { apiMessage } from '../../helper/api-message';
 import { gets3SignedUrls } from '../../helper/common-function';
-import {  exceptionHandler,AddExceptionIntoDB  } from '../../helper/responseHandler';
+import { exceptionHandler, AddExceptionIntoDB } from '../../helper/responseHandler';
 // AWS SDK removed – we use hostinger/local filesystem instead
 const fs = require('fs');
 const path = require('path');
@@ -38,7 +38,7 @@ export const FileDelete = async (req: Request, res: Response) => {
             return RequestResponse.validationError(res, apiMessage.invalidRequest, status.error, []);
         }
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 };
@@ -65,7 +65,7 @@ export const FileUpload = async (req: Request, res: Response) => {
             return RequestResponse.success(res, apiMessage.fileUpload, status.success, fileArray);
         }
     } catch (error: any) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return exceptionHandler(res, 1, error.message);
     }
 };
@@ -93,7 +93,7 @@ const uploadFileToS3 = async (file: any) => {
         let id = uuidv4();
         const uniqueFileName = `${id}.${filename[0]}.${filetype}`;
         // will always use hostinger/local filesystem
-        if (['pdf','doc','docx','xlsx','xls','png','jpg','jpeg','mp4'].includes(filetype)) {
+        if (['pdf', 'doc', 'docx', 'xlsx', 'xls', 'png', 'jpg', 'jpeg', 'mp4'].includes(filetype)) {
             const uploadDirectory = resolveUploadDirectory();
 
             fs.mkdir(uploadDirectory, { recursive: true }, (mkdirError: Error) => {
@@ -122,4 +122,3 @@ const uploadFileToS3 = async (file: any) => {
         }
     });
 };
-

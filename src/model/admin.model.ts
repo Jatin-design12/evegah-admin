@@ -1,4 +1,3 @@
-
 interface getEnumDetailsRes {
     enum_id: Number;
     enum_type_name: string;

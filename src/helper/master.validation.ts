@@ -23,7 +23,7 @@ export const vehicleValidation = async (requestBody: any) => {
     }
     if (!requestBody.length || requestBody.length <= 0) {
         return (message = 'Please Enter Valid vehicle Length.');
-    }   
+    }
     if (!requestBody.lengthUnit) {
         return (message = 'Please Enter Valid vehicle Length Unit.');
     }
@@ -39,5 +39,5 @@ export const vehicleValidation = async (requestBody: any) => {
     }
     if (!requestBody.widthUnit) {
         return (message = 'Please Enter Valid vehicle Width Unit');
-    }    
+    }
 };

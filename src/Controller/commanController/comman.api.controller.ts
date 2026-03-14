@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { FileDelete, FileUpload } from '../../services/commanServices/comman.api.services';
-import { exceptionHandler,AddExceptionIntoDB  } from '../../helper/responseHandler';
+import { exceptionHandler, AddExceptionIntoDB } from '../../helper/responseHandler';
 const fileDelete = async (req: Request, res: Response) => {
     try {
         /* 	#swagger.tags = ['Comman-api']
@@ -23,9 +23,8 @@ const fileDelete = async (req: Request, res: Response) => {
             user: 200
         });
     } catch (error) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return Promise.reject({
-            
             message: 'error',
             user: error
         });
@@ -51,7 +50,7 @@ const fileUploadService = async (req: Request, res: Response) => {
             user: 200
         });
     } catch (error) {
-        AddExceptionIntoDB(req,error);
+        AddExceptionIntoDB(req, error);
         return Promise.reject({
             message: 'error',
             user: error

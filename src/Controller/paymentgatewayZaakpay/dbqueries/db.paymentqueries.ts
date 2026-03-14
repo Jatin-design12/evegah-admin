@@ -1,18 +1,14 @@
 export const DB_CONFIGS = {
     paymentQueries: {
-        insertPaymentPatewayTransction:()=>
-        {
+        insertPaymentPatewayTransction: () => {
             return `INSERT INTO payment.tbl_Payment_gateway_transction(
                 user_id, order_id, amount, payment_transction_enum_id, zaakpay_payment_status_enum_id,status_enum_id,createdon_date,client_return_url,createdby_login_user_id)
-               VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9) RETURNING id;`
-         
+               VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9) RETURNING id;`;
         },
-        getUserEmailId:()=>
-        {
-            return `select emailid from admin.tbl_admin where id = $1;`         
+        getUserEmailId: () => {
+            return `select emailid from admin.tbl_admin where id = $1;`;
         },
-        updatePaymentPatewayTransction:()=>
-        {
+        updatePaymentPatewayTransction: () => {
             return `update payment.tbl_Payment_gateway_transction set 
                     payment_json =$1,
                     zaakpay_payment_status_enum_id = $2,
@@ -20,7 +16,7 @@ export const DB_CONFIGS = {
                     payment_transaction_id= $5,
                     updated_login_user_id =$6
                     where id = $4
-                    `   
+                    `;
         },
         insertZaakPaymentTransaction: () => {
             return `INSERT INTO admin.tbl_payment_transaction_details(
@@ -64,17 +60,13 @@ export const DB_CONFIGS = {
                 payment_order_no
                 )
                 VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22,$23, $24,$25,$26,$27,$28,$29) RETURNING id;`;
-             },
+        },
 
-
-             getTransactions: () =>
-             {
-                return `select  id from admin.tbl_payment_transaction_details where order_id =$1`
-             },
-             getClientUrl: () =>
-             {
-                return `select client_return_url from  payment.tbl_Payment_gateway_transction where id =$1`
-            },
-        
+        getTransactions: () => {
+            return `select  id from admin.tbl_payment_transaction_details where order_id =$1`;
+        },
+        getClientUrl: () => {
+            return `select client_return_url from  payment.tbl_Payment_gateway_transction where id =$1`;
+        }
     }
-}
+};

@@ -15,9 +15,9 @@ class BikeProduce {
             lockId: bikeProduceDetails.lockId
         };
         let encryptData = encrypt(JSON.stringify(bikeProduceDetails.qrNumber));
-        
+
         let qr = await generatedQrCodeForVehicles({ encryptQr: encryptData });
-        
+
         let query: any = {
             text: DB_CONFIGS.bikeProduce.insertBikeProduce(),
             values: [
@@ -33,7 +33,7 @@ class BikeProduce {
                 encryptData,
                 bikeProduceDetails.zoneId,
                 bikeProduceDetails.bikeName,
-                bikeProduceDetails.geofence_inout_enum_id ,
+                bikeProduceDetails.geofence_inout_enum_id,
                 bikeProduceDetails.qrNumber
             ]
         };
@@ -47,27 +47,18 @@ class BikeProduce {
             }
         });
     }
-    
 
     async updateQRcodeForBikeProduce(bikeProduceDetails: any) {
         let actionOnDate = getUTCdate();
-       
+
         let encryptData = encrypt(JSON.stringify(bikeProduceDetails.qrNumber));
-      
+
         let qr = await generatedQrCodeForVehicles({ encryptQr: encryptData });
         let query: any = {
             text: DB_CONFIGS.bikeProduce.updateQRcodeForBikeProduce(),
-            values: [          
-                bikeProduceDetails.bikeProduceId,
-                bikeProduceDetails.qrNumber ,
-                encryptData.toString(),
-                qr,
-                bikeProduceDetails.remark,
-                bikeProduceDetails.actionByLoginUserId,                
-                actionOnDate         
-            ]
+            values: [bikeProduceDetails.bikeProduceId, bikeProduceDetails.qrNumber, encryptData.toString(), qr, bikeProduceDetails.remark, bikeProduceDetails.actionByLoginUserId, actionOnDate]
         };
-     
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -86,7 +77,7 @@ class BikeProduce {
             lockId: bikeProduceDetails.lockId
         };
         let encryptData = encrypt(JSON.stringify(data));
-     
+
         let qr = await generatedQrCodeForVehicles({ encryptQr: encryptData });
         let query: any = {
             text: DB_CONFIGS.bikeProduce.updateBikeProduce(),
@@ -105,7 +96,7 @@ class BikeProduce {
                 bikeProduceDetails.zoneId
             ]
         };
-     
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
@@ -152,7 +143,7 @@ class BikeProduce {
             text: DB_CONFIGS.bikeProduce.getBikeReservedUnReservedStatus(),
             values: [bikeProduceDetails.vehicleId, bikeProduceDetails.uId, bikeProduceDetails.lockId]
         };
-               return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
                 resolve(result);
@@ -163,56 +154,49 @@ class BikeProduce {
     }
 
     async calculateDistance(latlogDetail: any) {
-               let query: any = {
-            text: DB_CONFIGS.rideBooking.findNearestZone(),
-            values: [latlogDetail.rideEndLatitude +' '+ latlogDetail.rideEndtLongitude]
-        };
-        
-        return new Promise(async (resolve, reject) => {
-            try {
-                
-                let result = await client.query(query);
-                
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
-    
-    async getEncryptedData(bikeProduceDetails: any) {
         let query: any = {
-            
-            text: DB_CONFIGS.bikeProduce.getEncryptedData(),
-            values: [bikeProduceDetails.qrString]
-              
+            text: DB_CONFIGS.rideBooking.findNearestZone(),
+            values: [latlogDetail.rideEndLatitude + ' ' + latlogDetail.rideEndtLongitude]
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
-                
+
                 resolve(result);
             } catch (error) {
-                
                 reject(error);
             }
         });
     }
 
+    async getEncryptedData(bikeProduceDetails: any) {
+        let query: any = {
+            text: DB_CONFIGS.bikeProduce.getEncryptedData(),
+            values: [bikeProduceDetails.qrString]
+        };
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
     async getBikeQRData(bikeProduceDetails: any) {
         let query: any = {
-            
             text: DB_CONFIGS.bikeProduce.getBikeId(),
             values: [bikeProduceDetails.lockNumber]
-            
         };
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await client.query(query);
-                
+
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -235,7 +219,6 @@ class BikeProduce {
         });
     }
 
- 
     async checkSameCombinationLockNumberWithBikeNotProduce(bikeProduceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.checkSameCombinationBikeNotProduce(),
@@ -255,7 +238,7 @@ class BikeProduce {
     async checkSameCombinationUIdWithBikeNotProduce(bikeProduceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.checkSameCombinationBikeNotProduce(),
-            values: [bikeProduceDetails.uId,bikeProduceDetails.bikeProduceId]
+            values: [bikeProduceDetails.uId, bikeProduceDetails.bikeProduceId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -270,7 +253,7 @@ class BikeProduce {
     async checkNameBikeExitOrNot(bikeProduceDetails: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.checkNameBikeExitOrNot(),
-            values: [bikeProduceDetails.bikeName,bikeProduceDetails.bikeProduceId]
+            values: [bikeProduceDetails.bikeName, bikeProduceDetails.bikeProduceId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -282,13 +265,12 @@ class BikeProduce {
             }
         });
     }
-    
-    async getBookedBikeList(bikeProduceDetails : any ) {
+
+    async getBookedBikeList(bikeProduceDetails: any) {
         let query: any = {
-            text: DB_CONFIGS.bikeProduce.activeRideListWithMapCitySearch() ,
-            values: [bikeProduceDetails.mapCountryName,bikeProduceDetails.mapStateName,bikeProduceDetails.mapCityName,bikeProduceDetails.rideBookingId]          
+            text: DB_CONFIGS.bikeProduce.activeRideListWithMapCitySearch(),
+            values: [bikeProduceDetails.mapCountryName, bikeProduceDetails.mapStateName, bikeProduceDetails.mapCityName, bikeProduceDetails.rideBookingId]
         };
-        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -300,10 +282,10 @@ class BikeProduce {
         });
     }
 
-    async getDeveiceLatLog(deviceId : any ) {
+    async getDeveiceLatLog(deviceId: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.deviceLatLog(),
-            values: [deviceId.deviceId]           
+            values: [deviceId.deviceId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -332,11 +314,10 @@ class BikeProduce {
         });
     }
 
-    async getAvailableBikeList(bikeDetail:any ) {
+    async getAvailableBikeList(bikeDetail: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.availableBikeListWithMapCitySearch(),
-            values:[bikeDetail.mapCountryName, bikeDetail.mapStateName,bikeDetail.mapCityName,bikeDetail.lockId]  
-
+            values: [bikeDetail.mapCountryName, bikeDetail.mapStateName, bikeDetail.mapCityName, bikeDetail.lockId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -348,28 +329,10 @@ class BikeProduce {
             }
         });
     }
-    async availableLockUnlockCardDetailService(bikeDetail:any ) {
+    async availableLockUnlockCardDetailService(bikeDetail: any) {
         let query: any = {
             text: DB_CONFIGS.bikeProduce.availableLockUnlockCardDetail(),
-            values:[bikeDetail.mapCountryName, bikeDetail.mapStateName,bikeDetail.mapCityName,bikeDetail.lockId]  
-
-        };
-        
-        return new Promise(async (resolve, reject) => {
-            try {
-                let result = await client.query(query);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
-
-    
-    async getUndermaintenanceBikeList(bikeProduceDetail :any) {
-        let query: any = {           
-            text: DB_CONFIGS.bikeProduce. getUndermaintenanceBikeWithMapCitySearch(),
-            values:[bikeProduceDetail.mapCountryName,bikeProduceDetail.mapStateName,bikeProduceDetail.mapCityName,bikeProduceDetail.lockId]           
+            values: [bikeDetail.mapCountryName, bikeDetail.mapStateName, bikeDetail.mapCityName, bikeDetail.lockId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -382,10 +345,10 @@ class BikeProduce {
         });
     }
 
-    async getOutSideGeoFanceBikeListServce(bikeDetail:any ) {
+    async getUndermaintenanceBikeList(bikeProduceDetail: any) {
         let query: any = {
-            text: DB_CONFIGS.bikeProduce.getOutSideGeoFanceBikeListMaCitySearchQ() ,
-            values:[bikeDetail.mapCountryName,bikeDetail.mapStateName,bikeDetail.mapCityName]        
+            text: DB_CONFIGS.bikeProduce.getUndermaintenanceBikeWithMapCitySearch(),
+            values: [bikeProduceDetail.mapCountryName, bikeProduceDetail.mapStateName, bikeProduceDetail.mapCityName, bikeProduceDetail.lockId]
         };
 
         return new Promise(async (resolve, reject) => {
@@ -398,8 +361,21 @@ class BikeProduce {
         });
     }
 
-  
-}
+    async getOutSideGeoFanceBikeListServce(bikeDetail: any) {
+        let query: any = {
+            text: DB_CONFIGS.bikeProduce.getOutSideGeoFanceBikeListMaCitySearchQ(),
+            values: [bikeDetail.mapCountryName, bikeDetail.mapStateName, bikeDetail.mapCityName]
+        };
 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await client.query(query);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+}
 
 export default new BikeProduce();

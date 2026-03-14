@@ -4,7 +4,7 @@ export const zoneValidation = async (requestBody: any) => {
     let message;
     if (!requestBody.areaId) {
         return (message = 'Please Enter Valid City');
-    }    
+    }
     if (!requestBody.name || requestBody.name.trim() === '') {
         return (message = 'Please Enter Valid Zone Name.');
     }
